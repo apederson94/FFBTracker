@@ -1,9 +1,9 @@
 package com.amped94.ffbtracker.data.api
 
-import android.util.Log
-import com.amped94.ffbtracker.data.model.data.SleeperLeague
-import com.amped94.ffbtracker.data.model.data.SleeperLeagueParticipant
-import com.amped94.ffbtracker.data.model.data.SleeperUser
+import com.amped94.ffbtracker.data.api.model.SleeperLeagueParticipant
+import com.amped94.ffbtracker.data.api.model.SleeperLeagueResponse
+import com.amped94.ffbtracker.data.api.model.SleeperPlayerResponse
+import com.amped94.ffbtracker.data.api.model.SleeperUserResponse
 import io.ktor.client.*
 import io.ktor.client.features.json.*
 import io.ktor.client.features.json.serializer.*
@@ -25,22 +25,28 @@ object SleeperApi {
         }
     }
 
-    suspend fun getSleeperUser(username: String): SleeperUser {
+    suspend fun getSleeperUser(username: String): SleeperUserResponse {
         return getClient().use {
             it.get("https://api.sleeper.app/v1/user/$username")
         }
     }
 
-    suspend fun getSleeperLeagues(userId: String): List<SleeperLeague> {
+    suspend fun getSleeperLeagues(userId: String): List<SleeperLeagueResponse> {
         val year = Calendar.getInstance().get(Calendar.YEAR)
         return getClient().use {
             it.get("https://api.sleeper.app/v1/user/$userId/leagues/nfl/$year")
         }
     }
 
-    suspend fun getLeagueParticipants(league: SleeperLeague): List<SleeperLeagueParticipant> {
+    suspend fun getLeagueParticipants(league: SleeperLeagueResponse): List<SleeperLeagueParticipant> {
         return getClient().use {
             it.get("https://api.sleeper.app/v1/league/${league.leagueId}/rosters")
+        }
+    }
+
+    suspend fun getAllPlayers(): SleeperPlayerResponse {
+        return getClient().use {
+            it.get("https://api.sleeper.app/v1/players/nfl")
         }
     }
 }

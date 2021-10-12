@@ -1,10 +1,10 @@
-package com.amped94.ffbtracker.data.model.data
+package com.amped94.ffbtracker.data.api.model
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class SleeperUser(
+data class SleeperUserResponse(
     val username: String = "",
     @SerialName("user_id") val userId: String = "",
     @SerialName("display_name") val displayName: String = "",

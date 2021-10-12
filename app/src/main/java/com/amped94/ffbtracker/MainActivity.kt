@@ -15,7 +15,8 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.tooling.preview.Preview
-import com.amped94.ffbtracker.data.model.data.SleeperUser
+import com.amped94.ffbtracker.data.api.model.SleeperUserResponse
+import com.amped94.ffbtracker.data.model.db.entity.User
 import com.amped94.ffbtracker.data.model.viewModel.MainViewModel
 import com.amped94.ffbtracker.ui.theme.FFBTrackerTheme
 
@@ -36,59 +37,45 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun Main() {
-    val viewModel by remember { mutableStateOf(MainViewModel()) }
-    val user by viewModel.user.observeAsState(initial = SleeperUser())
-    val leagues by viewModel.leagues.observeAsState(initial = listOf())
-    val players by viewModel.players.observeAsState(initial = listOf())
+    val viewModel by remember { mutableStateOf(MainViewModel())}
+    val user by viewModel.user.observeAsState()
+    val players by viewModel.players.observeAsState()
 
     Column {
         Text("User Info")
         Divider()
-        Text(user.username)
-        Text(user.userId)
-        Text(user.displayName)
-        Text(user.avatar)
-
-        Divider()
-        Text("Leagues")
-        Divider()
-
-        leagues.forEach {
-            Text(it.leagueId)
+        user?.let {
+            UserInfo(it)
         }
-
-        Divider()
-        Text("Players")
-        Divider()
-
-        players.forEach {
-            Row {
-                Column {
-                    Text("PlayerId")
-                    Text(it.id)
-                }
-                Column {
-                    Text("League Names")
-                    it.leagues.forEach {
-                        Text(it.name)
-                    }
-                }
+        players?.let {
+            it.forEach { player ->
+                CustomText(title = "name", content = player.name)
             }
         }
-
-
     }
 }
 
 @Composable
-fun Greeting(name: String) {
-    Text(text = "Hello $name!")
+fun UserInfo(user: User) {
+    Column {
+        CustomText(title = "Username", content = user.username)
+        CustomText(title = "Account ID", content = user.accountId)
+        CustomText(title = "Type", content = user.type.toString())
+    }
+}
+
+@Composable
+fun CustomText(title: String, content: String) {
+    Row {
+        Text(title)
+        Text(content)
+    }
 }
 
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
     FFBTrackerTheme {
-        Greeting("Android")
+        CustomText(title = "TEST", content = "TEST2")
     }
 }

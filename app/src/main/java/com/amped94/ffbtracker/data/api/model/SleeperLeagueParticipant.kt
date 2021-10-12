@@ -1,4 +1,4 @@
-package com.amped94.ffbtracker.data.model.data
+package com.amped94.ffbtracker.data.api.model
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
