@@ -2,55 +2,77 @@ package com.amped94.ffbtracker.data.repository
 
 import com.amped94.ffbtracker.data.api.SleeperApi
 import com.amped94.ffbtracker.data.model.db.AppDatabase
-import com.amped94.ffbtracker.data.model.db.entity.FantasyProvider
-import com.amped94.ffbtracker.data.model.db.entity.League
-import com.amped94.ffbtracker.data.model.db.entity.Player
-import com.amped94.ffbtracker.data.model.db.entity.User
+import com.amped94.ffbtracker.data.model.db.FantasyProvider
+import com.amped94.ffbtracker.data.model.db.entity.*
 
 object SleeperRepository {
     val db: AppDatabase = AppDatabase.instance
 
-    suspend fun getUser(username: String): User {
-        val user = db.userDao().getUser(username)
+    suspend fun getUserAndLeagues(username: String): UserAndLeagues {
+        val userAndLeagues = db.userDao().getUserAndLeagues(username)
 
-        return user ?: run {
+        return userAndLeagues ?: run {
             val userResponse = SleeperApi.getSleeperUser(username)
+            val userId = db.userDao().insert(
+                User(
+                    userId = 0,
+                    username = username,
+                    type = FantasyProvider.sleeper,
+                    accountId = userResponse.userId
+                )
+            ).first()
+
             val leaguesResponse = SleeperApi.getSleeperLeagues(userResponse.userId)
-            val leagues = mutableListOf<League>()
+            val queriedPlayers = db.playerDao().getAll()
+
+            val allPlayers = if (queriedPlayers.isNotEmpty()) queriedPlayers else {
+                val playersReponse = SleeperApi.getAllPlayers()
+                val roomPlayers = playersReponse.map {
+                    Player(
+                        playerId = 0,
+                        externalPlayerId = it.key,
+                        name = it.value.fullName ?: "",
+                        team = ""
+                    )
+                }
+                db.playerDao().insert(*roomPlayers.toTypedArray())
+                db.playerDao().getAll()
+            }
+
+            val crossRefs = mutableListOf<PlayerLeagueCrossRef>()
 
             leaguesResponse.forEach { league ->
+                val leagueId = db.leagueDao().insert(
+                    League(
+                        leagueId = 0,
+                        externalLeagueId = league.leagueId,
+                        associatedUserId = userId,
+                        name = league.name
+                    )
+                ).first()
+
                 SleeperApi.getLeagueParticipants(league).firstOrNull { participant ->
                     participant.ownerId == userResponse.userId
                 }?.let { participant ->
-                    leagues.add(
-                        League(
-                            id = 0,
-                            leagueId = league.leagueId,
-                            players = participant.players
+                    participant.players.forEach { sleeperPlayerId ->
+                        val playerId = allPlayers.first { roomPlayer ->
+                            roomPlayer.externalPlayerId == sleeperPlayerId
+                        }.playerId
+                        crossRefs.add(
+                            PlayerLeagueCrossRef(
+                                playerId = playerId,
+                                leagueId = leagueId
+                            )
                         )
-                    )
+                    }
                 }
             }
 
-            db.leagueDao().insert(*leagues.toTypedArray())
-            val newLeagues = db.leagueDao().getAll()
+            db.playerLeagueCrossRefDao().insert(*crossRefs.toTypedArray())
 
-            val newUser = User(
-                id = 0,
-                username = userResponse.username,
-                type = FantasyProvider.sleeper,
-                accountId = userResponse.userId,
-                leagues = newLeagues.map { it.id }
-            )
-
-            db.userDao().insert(newUser)
-
-            newUser
+            val user = db.userDao().getUserAndLeagues(username)
+            return user ?: getUserAndLeagues(username)
         }
-    }
-
-    suspend fun getLeagues(user: User): List<League> {
-        return db.leagueDao().getLeagues(user.leagues)
     }
 
     suspend fun fetchAllPlayers() {
@@ -61,8 +83,8 @@ object SleeperRepository {
 
             val newPlayers = playersResponse.map {
                 Player(
-                    id = 0,
-                    playerId = it.key,
+                    playerId = 0,
+                    externalPlayerId = it.key,
                     name = it.value.fullName ?: "",
                     team = ""
                 )

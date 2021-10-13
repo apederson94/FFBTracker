@@ -5,7 +5,8 @@ import androidx.room.PrimaryKey
 
 @Entity
 data class League(
-    @PrimaryKey(autoGenerate = true) val id: Int,
-    val leagueId: String,
-    val players: List<String>
+    @PrimaryKey(autoGenerate = true) val leagueId: Long,
+    val externalLeagueId: String,
+    val associatedUserId: Long,
+    val name: String
 )

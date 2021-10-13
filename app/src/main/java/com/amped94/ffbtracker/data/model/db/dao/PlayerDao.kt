@@ -11,14 +11,14 @@ interface PlayerDao {
     @Query("SELECT * FROM Player")
     suspend fun getAll(): List<Player>
 
-    @Query("SELECT * FROM Player WHERE id = :id")
+    @Query("SELECT * FROM Player WHERE playerId = :id")
     suspend fun getPlayer(id: Int): Player?
 
     @Query("SELECT * FROM Player WHERE playerId IN (:ids)")
     suspend fun getPlayers(ids: List<String>): List<Player>
 
     @Insert
-    suspend fun insert(vararg player: Player)
+    suspend fun insert(vararg player: Player): List<Long>
 
     @Delete
     suspend fun delete(player: Player)

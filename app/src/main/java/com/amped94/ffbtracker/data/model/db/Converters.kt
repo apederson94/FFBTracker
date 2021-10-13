@@ -6,15 +6,6 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 class LeagueConverter {
-//    @TypeConverter
-//    fun fromInt(value: Int): FantasyProvider {
-//        return FantasyProvider.values()[value]
-//    }
-//
-//    @TypeConverter
-//    fun fantasyProviderToInt(provider: FantasyProvider): Int {
-//        return provider.ordinal
-//    }
 
     @TypeConverter
     fun toStringList(jsonString: String): List<String> {
@@ -34,5 +25,15 @@ class LeagueConverter {
     @TypeConverter
     fun fromIntList(value: List<Int>): String {
         return Json.encodeToString(value)
+    }
+
+    @TypeConverter
+    fun fromFantasyProvider(value: FantasyProvider): Int {
+        return value.ordinal
+    }
+
+    @TypeConverter
+    fun toFantasyProvider(value: Int): FantasyProvider {
+        return FantasyProvider.values()[value]
     }
 }
