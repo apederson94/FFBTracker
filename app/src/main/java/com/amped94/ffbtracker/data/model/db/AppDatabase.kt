@@ -10,7 +10,7 @@ import com.amped94.ffbtracker.data.model.db.entity.Player
 import com.amped94.ffbtracker.data.model.db.entity.User
 
 @Database(
-    version = 2,
+    version = 3,
     entities = [User::class, League::class, Player::class],
 )
 @TypeConverters(LeagueConverter::class)

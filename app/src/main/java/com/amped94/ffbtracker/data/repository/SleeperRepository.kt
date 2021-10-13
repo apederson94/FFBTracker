@@ -15,12 +15,32 @@ object SleeperRepository {
 
         return user ?: run {
             val userResponse = SleeperApi.getSleeperUser(username)
+            val leaguesResponse = SleeperApi.getSleeperLeagues(userResponse.userId)
+            val leagues = mutableListOf<League>()
+
+            leaguesResponse.forEach { league ->
+                SleeperApi.getLeagueParticipants(league).firstOrNull { participant ->
+                    participant.ownerId == userResponse.userId
+                }?.let { participant ->
+                    leagues.add(
+                        League(
+                            id = 0,
+                            leagueId = league.leagueId,
+                            players = participant.players
+                        )
+                    )
+                }
+            }
+
+            db.leagueDao().insert(*leagues.toTypedArray())
+            val newLeagues = db.leagueDao().getAll()
+
             val newUser = User(
                 id = 0,
                 username = userResponse.username,
                 type = FantasyProvider.sleeper,
                 accountId = userResponse.userId,
-                leagues = emptyList()
+                leagues = newLeagues.map { it.id }
             )
 
             db.userDao().insert(newUser)
@@ -30,23 +50,7 @@ object SleeperRepository {
     }
 
     suspend fun getLeagues(user: User): List<League> {
-        val leagues = db.leagueDao().getLeagues(user.id)
-
-        return if (leagues.isNotEmpty()) leagues else {
-            val leaguesResponse = SleeperApi.getSleeperLeagues(user.accountId)
-            val newLeagues = leaguesResponse.map {
-                League(
-                    id = 0,
-                    leagueId = it.leagueId,
-                    userId = user.id,
-                    players = emptyList()
-                )
-            }
-
-            db.leagueDao().insert(*newLeagues.toTypedArray())
-
-            newLeagues
-        }
+        return db.leagueDao().getLeagues(user.leagues)
     }
 
     suspend fun fetchAllPlayers() {
@@ -69,6 +73,10 @@ object SleeperRepository {
     }
 
     suspend fun getPlayersById(ids: List<String>): List<Player> {
+        if (db.playerDao().getAll().isEmpty()) {
+            fetchAllPlayers()
+        }
+
         val players = db.playerDao().getPlayers(ids)
 
         return players

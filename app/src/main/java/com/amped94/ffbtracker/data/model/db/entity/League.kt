@@ -7,6 +7,5 @@ import androidx.room.PrimaryKey
 data class League(
     @PrimaryKey(autoGenerate = true) val id: Int,
     val leagueId: String,
-    val userId: Int,
     val players: List<String>
 )

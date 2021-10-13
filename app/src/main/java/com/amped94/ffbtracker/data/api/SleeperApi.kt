@@ -5,6 +5,7 @@ import com.amped94.ffbtracker.data.api.model.SleeperLeagueResponse
 import com.amped94.ffbtracker.data.api.model.SleeperPlayerResponse
 import com.amped94.ffbtracker.data.api.model.SleeperUserResponse
 import io.ktor.client.*
+import io.ktor.client.engine.okhttp.*
 import io.ktor.client.features.json.*
 import io.ktor.client.features.json.serializer.*
 import io.ktor.client.request.*
@@ -13,7 +14,7 @@ import java.util.*
 object SleeperApi {
 
     private fun getClient(): HttpClient {
-        return HttpClient {
+        return HttpClient(OkHttp) {
             install(JsonFeature) {
                 serializer = KotlinxSerializer(
                     kotlinx.serialization.json.Json {

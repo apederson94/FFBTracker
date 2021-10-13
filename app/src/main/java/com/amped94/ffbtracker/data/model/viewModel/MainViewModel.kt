@@ -23,17 +23,23 @@ class MainViewModel : ViewModel() {
     val players: LiveData<List<Player>> = _players
 
     init {
-        getUser("apederson94")
-
         viewModelScope.launch {
-            SleeperRepository.fetchAllPlayers()
-            getPlayers()
+            getSleeperAccountDetails("apederson94")
         }
     }
 
-    fun getUser(username: String) {
+    fun getSleeperAccountDetails(username: String) {
         viewModelScope.launch {
             val user = SleeperRepository.getUser(username)
+            val leagues = SleeperRepository.getLeagues(user)
+            val playersToFind = leagues.map { it.players }.reduce { result, players ->
+                val newList = result.toMutableSet()
+                newList.addAll(players)
+                newList.toList()
+            }
+            val players = SleeperRepository.getPlayersById(playersToFind)
+
+            _players.postValue(players)
             _user.postValue(user)
         }
     }
