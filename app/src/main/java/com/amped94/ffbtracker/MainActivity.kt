@@ -31,7 +31,10 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.preference.PreferenceManager
 import com.amped94.ffbtracker.data.model.db.entity.PlayerAndLeagues
+import com.amped94.ffbtracker.data.model.ui.Screen
 import com.amped94.ffbtracker.data.model.viewModel.MainViewModel
+import com.amped94.ffbtracker.ui.composable.BottomBar
+import com.amped94.ffbtracker.ui.composable.PlayersList
 import com.amped94.ffbtracker.ui.theme.FFBTrackerTheme
 
 class MainActivity : ComponentActivity() {
@@ -47,109 +50,33 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-}
 
-sealed class Screen(val route: String, val img: ImageVector, val title: String) {
-    object Account : Screen("account", Icons.Filled.AccountCircle, "Account")
-    object Players : Screen("players", Icons.Filled.Person, "Players")
-    object AddLeague : Screen("addLeague", Icons.Filled.AddCircle, "Add League")
-}
+    @Composable
+    fun Main() {
+        val prefs = PreferenceManager.getDefaultSharedPreferences(MainApplication.getContext())
+        val username = prefs.getString("sleeperUsername", "")
+        val navController = rememberNavController()
 
-@Composable
-fun Main() {
-    val prefs = PreferenceManager.getDefaultSharedPreferences(MainApplication.getContext())
-    val username = prefs.getString("sleeperUsername", "")
-    val navController = rememberNavController()
-
-    Scaffold(
-        topBar = {
-                 TopAppBar(title = { Text("FFBTracker")})
-        },
-        bottomBar = {
-            BottomBar(navController = navController)
-        }
-    ) {
-        NavHost(navController = navController, startDestination = Screen.Players.route) {
-            composable(Screen.Account.route) {
-                Text("Account")
+        Scaffold(
+            topBar = {
+                TopAppBar(title = { Text("FFBTracker")})
+            },
+            bottomBar = {
+                BottomBar(navController = navController)
             }
-            composable(Screen.Players.route) {
-                PlayersList()
-            }
-            composable(Screen.AddLeague.route) {
-                Text("Add League")
-            }
-        }
-    }
-}
-
-@Composable
-fun BottomBar(navController: NavController) {
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentDestination = navBackStackEntry?.destination
-    val navItems = listOf(Screen.Account, Screen.Players, Screen.AddLeague)
-
-    BottomAppBar {
-        navItems.forEach { screen ->
-            BottomNavigationItem(
-                selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
-                onClick = {
-                    navController.navigate(screen.route) {
-                        // Pop up to the start destination of the graph to
-                        // avoid building up a large stack of destinations
-                        // on the back stack as users select items
-                        popUpTo(navController.graph.findStartDestination().id) {
-                            saveState = true
-                        }
-                        // Avoid multiple copies of the same destination when
-                        // reselecting the same item
-                        launchSingleTop = true
-                        // Restore state when reselecting a previously selected item
-                        restoreState = true
-                    }
-                },
-                icon = {
-                    Icon(screen.img, screen.title)
+        ) {
+            NavHost(navController = navController, startDestination = Screen.Players.route) {
+                composable(Screen.Account.route) {
+                    Text("Account")
                 }
-            )
-        }
-    }
-}
-
-@Composable
-fun PlayersList() {
-    val viewModel by remember { mutableStateOf(MainViewModel()) }
-    val playersAndLeagues by viewModel.playersAndLeagues.observeAsState()
-
-    Column {
-        playersAndLeagues?.let { playersAndLeagues ->
-            UserInfo(playersAndLeagues)
-        } ?: Text("Loading...")
-    }
-}
-
-@Composable
-fun UserInfo(playerData: List<PlayerAndLeagues>) {
-
-    LazyColumn(modifier = Modifier.fillMaxWidth()) {
-
-        playerData.sortedBy { it.player.lastName }.forEach { player ->
-            item {
-                Text("${player.player.lastName}, ${player.player.firstName}")
-
-                player.leagues.forEach {
-                    Text(it.name, modifier = Modifier.padding(start = 64.dp))
+                composable(Screen.Players.route) {
+                    PlayersList()
+                }
+                composable(Screen.AddLeague.route) {
+                    Text("Add League")
                 }
             }
         }
-    }
-}
-
-@Composable
-fun CustomText(title: String, content: String) {
-    Row {
-        Text(title)
-        Text(content)
     }
 }
 
@@ -157,6 +84,6 @@ fun CustomText(title: String, content: String) {
 @Composable
 fun DefaultPreview() {
     FFBTrackerTheme {
-        CustomText(title = "TEST", content = "TEST2")
+        Text("Test")
     }
 }
