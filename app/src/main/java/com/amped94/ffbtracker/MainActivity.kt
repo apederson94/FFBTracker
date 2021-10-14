@@ -59,12 +59,16 @@ sealed class Screen(val route: String, val img: ImageVector, val title: String) 
 fun Main() {
     val prefs = PreferenceManager.getDefaultSharedPreferences(MainApplication.getContext())
     val username = prefs.getString("sleeperUsername", "")
-    var bottomBarTarget = remember { BottomBarTarget.Players }
     val navController = rememberNavController()
 
-    Scaffold(bottomBar = {
-        BottomBar(navController = navController)
-    }) {
+    Scaffold(
+        topBar = {
+                 TopAppBar(title = { Text("FFBTracker")})
+        },
+        bottomBar = {
+            BottomBar(navController = navController)
+        }
+    ) {
         NavHost(navController = navController, startDestination = Screen.Players.route) {
             composable(Screen.Account.route) {
                 Text("Account")
@@ -79,14 +83,18 @@ fun Main() {
     }
 }
 
-enum class BottomBarTarget {
-    Account, Players, AddLeague
+@Composable
+fun Topbar(screen: Screen) {
+
+    TopAppBar(title = {
+        screen.title
+    })
 }
 
 @Composable
 fun BottomBar(navController: NavController) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentDestination = navController.currentDestination
+    val currentDestination = navBackStackEntry?.destination
     val navItems = listOf(Screen.Account, Screen.Players, Screen.AddLeague)
 
     BottomAppBar {
@@ -106,7 +114,6 @@ fun BottomBar(navController: NavController) {
                         launchSingleTop = true
                         // Restore state when reselecting a previously selected item
                         restoreState = true
-
                     }
                 },
                 icon = {
