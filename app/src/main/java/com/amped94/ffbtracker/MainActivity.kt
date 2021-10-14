@@ -15,6 +15,8 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.tooling.preview.Preview
+import com.amped94.ffbtracker.data.model.db.entity.PlayerAndLeagues
+import com.amped94.ffbtracker.data.model.db.entity.PlayerLeagueCrossRef
 import com.amped94.ffbtracker.data.model.db.entity.UserAndLeagues
 import com.amped94.ffbtracker.data.model.viewModel.MainViewModel
 import com.amped94.ffbtracker.ui.theme.FFBTrackerTheme
@@ -38,29 +40,26 @@ class MainActivity : ComponentActivity() {
 fun Main() {
     val viewModel by remember { mutableStateOf(MainViewModel()) }
     val user by viewModel.user.observeAsState()
+    val playersAndLeagues by viewModel.playersAndLeagues.observeAsState()
 
     Column {
-        Text("User Info")
-        Divider()
-        user?.let {
-            UserInfo(it)
-        }
+        user?.let { user ->
+            playersAndLeagues?.let { playersAndLeagues ->
+                UserInfo(playersAndLeagues)
+            }
+        } ?: Text("Loading...")
     }
 }
 
 @Composable
-fun UserInfo(user: UserAndLeagues) {
+fun UserInfo(playerData: List<PlayerAndLeagues>) {
     Column {
-        CustomText(title = "Username: ", content = user.user.username)
-        CustomText(title = "Account ID: ", content = user.user.accountId)
-        CustomText(title = "Type: ", content = user.user.type.toString())
 
-        user.leagues.forEach { league ->
-            CustomText(title = "League Name: ", content = league.league.name)
+        playerData.forEach { player ->
+            CustomText(title = "Player Name: ", content = player.player.name)
 
-            league.players.forEach { player ->
-                CustomText(title = "Player Name: ", content = player.name)
-                CustomText(title = "Player Team: ", content = player.team)
+            player.leagues.forEach {
+                Text(it.name)
             }
         }
     }

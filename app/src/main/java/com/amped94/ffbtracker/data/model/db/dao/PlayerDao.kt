@@ -1,10 +1,8 @@
 package com.amped94.ffbtracker.data.model.db.dao
 
-import androidx.room.Dao
-import androidx.room.Delete
-import androidx.room.Insert
-import androidx.room.Query
+import androidx.room.*
 import com.amped94.ffbtracker.data.model.db.entity.Player
+import com.amped94.ffbtracker.data.model.db.entity.PlayerAndLeagues
 
 @Dao
 interface PlayerDao {
@@ -16,6 +14,10 @@ interface PlayerDao {
 
     @Query("SELECT * FROM Player WHERE playerId IN (:ids)")
     suspend fun getPlayers(ids: List<String>): List<Player>
+
+    @Transaction
+    @Query("SELECT * FROM Player WHERE Player.playerId IN (SELECT playerId FROM PlayerLeagueCrossRef)")
+    suspend fun getPlayersAndLeagues(): List<PlayerAndLeagues>
 
     @Insert
     suspend fun insert(vararg player: Player): List<Long>

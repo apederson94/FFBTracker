@@ -94,13 +94,11 @@ object SleeperRepository {
         }
     }
 
-    suspend fun getPlayersById(ids: List<String>): List<Player> {
-        if (db.playerDao().getAll().isEmpty()) {
-            fetchAllPlayers()
-        }
+    suspend fun getPlayersAndLeagues(): List<PlayerAndLeagues> {
+        return db.playerDao().getPlayersAndLeagues()
+    }
 
-        val players = db.playerDao().getPlayers(ids)
-
-        return players
+    suspend fun getCrossRefs(): List<PlayerLeagueCrossRef> {
+        return db.playerLeagueCrossRefDao().getAll()
     }
 }
