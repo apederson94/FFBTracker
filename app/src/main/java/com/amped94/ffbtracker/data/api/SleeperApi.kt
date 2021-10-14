@@ -1,9 +1,13 @@
 package com.amped94.ffbtracker.data.api
 
+import androidx.preference.PreferenceManager
+import com.amped94.ffbtracker.Main
+import com.amped94.ffbtracker.MainApplication
 import com.amped94.ffbtracker.data.api.model.SleeperLeagueParticipant
 import com.amped94.ffbtracker.data.api.model.SleeperLeagueResponse
 import com.amped94.ffbtracker.data.api.model.SleeperPlayerResponse
 import com.amped94.ffbtracker.data.api.model.SleeperUserResponse
+import com.amped94.ffbtracker.data.model.db.entity.League
 import io.ktor.client.*
 import io.ktor.client.engine.okhttp.*
 import io.ktor.client.features.json.*
@@ -45,7 +49,15 @@ object SleeperApi {
         }
     }
 
+    suspend fun getLeagueParticipants(league: League): List<SleeperLeagueParticipant> {
+        return getClient().use {
+            it.get("https://api.sleeper.app/v1/league/${league.externalLeagueId}/rosters")
+        }
+    }
+
     suspend fun getAllPlayers(): SleeperPlayerResponse {
+        val prefs = PreferenceManager.getDefaultSharedPreferences(MainApplication.getContext())
+        prefs.edit().putLong("previousPlayerQueryTimestamp", Calendar.getInstance().timeInMillis).apply()
         return getClient().use {
             it.get("https://api.sleeper.app/v1/players/nfl")
         }

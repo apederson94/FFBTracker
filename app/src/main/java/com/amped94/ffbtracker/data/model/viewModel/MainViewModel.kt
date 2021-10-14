@@ -10,25 +10,25 @@ import com.amped94.ffbtracker.data.repository.SleeperRepository
 import kotlinx.coroutines.launch
 
 class MainViewModel : ViewModel() {
-    private var _user: MutableLiveData<UserAndLeagues> = MutableLiveData()
-    val user: LiveData<UserAndLeagues> = _user
+//    private var _user: MutableLiveData<UserAndLeagues> = MutableLiveData()
+//    val user: LiveData<UserAndLeagues> = _user
 
     private var _playersAndLeagues: MutableLiveData<List<PlayerAndLeagues>> = MutableLiveData()
     val playersAndLeagues: LiveData<List<PlayerAndLeagues>> = _playersAndLeagues
 
     init {
         viewModelScope.launch {
-            getSleeperAccountDetails("apederson94")
+//            getSleeperAccountDetails("apederson94")
             getPlayersAndLeagues()
         }
     }
 
-    fun getSleeperAccountDetails(username: String) {
-        viewModelScope.launch {
-            val user = SleeperRepository.getUserAndLeagues(username)
-            _user.postValue(user)
-        }
-    }
+//    fun getSleeperAccountDetails(username: String) {
+//        viewModelScope.launch {
+//            val user = SleeperRepository.getUserAndLeagues(username)
+//            _user.postValue(user)
+//        }
+//    }
 
     fun getPlayersAndLeagues() {
         viewModelScope.launch {

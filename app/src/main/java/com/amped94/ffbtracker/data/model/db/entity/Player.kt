@@ -7,6 +7,9 @@ import androidx.room.PrimaryKey
 data class Player(
     @PrimaryKey(autoGenerate = true) val playerId: Long,
     val externalPlayerId: String,
-    val name: String,
+    val firstName: String,
+    val lastName: String,
+    val age: Long,
+    val number: Long,
     val team: String
 )

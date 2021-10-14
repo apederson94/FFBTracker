@@ -5,6 +5,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.amped94.ffbtracker.MainApplication
+import com.amped94.ffbtracker.data.api.model.SleeperPlayer
 import com.amped94.ffbtracker.data.model.db.dao.LeagueDao
 import com.amped94.ffbtracker.data.model.db.dao.PlayerDao
 import com.amped94.ffbtracker.data.model.db.dao.PlayerLeagueCrossRefDao
@@ -15,7 +16,7 @@ import com.amped94.ffbtracker.data.model.db.entity.PlayerLeagueCrossRef
 import com.amped94.ffbtracker.data.model.db.entity.User
 
 @Database(
-    version = 7,
+    version = 1,
     entities = [
         User::class,
         League::class,

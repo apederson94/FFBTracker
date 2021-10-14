@@ -10,7 +10,7 @@ interface UserDao {
     suspend fun getAll(): List<User>
 
     @Query("SELECT * FROM User WHERE userId = :id")
-    suspend fun getUser(id: Int): User?
+    suspend fun getUser(id: Long): User?
 
     @Query("SELECT * FROM User WHERE username = :username")
     suspend fun getUser(username: String): User?

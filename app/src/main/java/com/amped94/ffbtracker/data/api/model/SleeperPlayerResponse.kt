@@ -1,14 +1,13 @@
 package com.amped94.ffbtracker.data.api.model
 
-import kotlinx.serialization.*
-import kotlinx.serialization.json.*
-import kotlinx.serialization.descriptors.*
-import kotlinx.serialization.encoding.*
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.JsonObject
 
 typealias SleeperPlayerResponse = HashMap<String, SleeperPlayer>
 
 @Serializable
-data class SleeperPlayer (
+data class SleeperPlayer(
     @SerialName("pandascore_id")
     val pandascoreID: JsonObject? = null,
 
@@ -79,6 +78,9 @@ data class SleeperPlayer (
 
     @SerialName("news_updated")
     val newsUpdated: Long? = null,
+
+    @SerialName("team")
+    val team: String? = null,
 
     @SerialName("practice_description")
     val practiceDescription: String? = null,
