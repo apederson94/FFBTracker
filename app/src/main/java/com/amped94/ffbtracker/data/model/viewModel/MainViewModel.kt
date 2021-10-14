@@ -5,7 +5,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.amped94.ffbtracker.data.model.db.entity.PlayerAndLeagues
-import com.amped94.ffbtracker.data.model.db.entity.PlayerLeagueCrossRef
 import com.amped94.ffbtracker.data.model.db.entity.UserAndLeagues
 import com.amped94.ffbtracker.data.repository.SleeperRepository
 import kotlinx.coroutines.launch
