@@ -5,6 +5,8 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
@@ -14,6 +16,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.amped94.ffbtracker.data.model.db.entity.PlayerAndLeagues
 import com.amped94.ffbtracker.data.model.db.entity.PlayerLeagueCrossRef
@@ -53,13 +56,16 @@ fun Main() {
 
 @Composable
 fun UserInfo(playerData: List<PlayerAndLeagues>) {
-    Column {
+
+    LazyColumn(modifier = Modifier.fillMaxWidth()) {
 
         playerData.forEach { player ->
-            CustomText(title = "Player Name: ", content = player.player.name)
+            item {
+                CustomText(title = "Player Name: ", content = player.player.name)
 
-            player.leagues.forEach {
-                Text(it.name)
+                player.leagues.forEach {
+                    Text(it.name)
+                }
             }
         }
     }
