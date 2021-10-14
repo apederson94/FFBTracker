@@ -84,14 +84,6 @@ fun Main() {
 }
 
 @Composable
-fun Topbar(screen: Screen) {
-
-    TopAppBar(title = {
-        screen.title
-    })
-}
-
-@Composable
 fun BottomBar(navController: NavController) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
