@@ -14,8 +14,7 @@ import androidx.compose.ui.unit.dp
 import com.amped94.ffbtracker.data.model.viewModel.MainViewModel
 
 @Composable
-fun PlayersList() {
-    val viewModel by remember { mutableStateOf(MainViewModel()) }
+fun PlayersList(viewModel: MainViewModel) {
     val playersAndLeagues by viewModel.playersAndLeagues.observeAsState()
 
     playersAndLeagues?.let { data ->

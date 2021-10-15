@@ -15,8 +15,11 @@ interface LeagueDao {
     @Query("SELECT * FROM League WHERE leagueId IN (:ids)")
     suspend fun getLeagues(ids: List<Long>): List<League>
 
-    @Query("SELECT * From League WHERE associatedUserId = :userId")
+    @Query("SELECT * FROM League WHERE associatedUserId = :userId")
     suspend fun getLeaguesForUser(userId: Long): List<League>
+
+    @Query("SELECT * FROM League WHERE associatedUserId IN (:userIds)")
+    suspend fun getLeaguesForUsers(userIds: List<Long>): List<League>
 
     @Update
     suspend fun updateLeague(league: League)
@@ -25,5 +28,5 @@ interface LeagueDao {
     suspend fun insert(vararg league: League): List<Long>
 
     @Delete
-    suspend fun delete(league: League)
+    suspend fun delete(vararg league: League)
 }

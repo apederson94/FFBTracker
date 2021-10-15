@@ -1,6 +1,7 @@
 package com.amped94.ffbtracker.data.model.db.dao
 
 import androidx.room.*
+import com.amped94.ffbtracker.data.model.db.FantasyProvider
 import com.amped94.ffbtracker.data.model.db.entity.User
 import com.amped94.ffbtracker.data.model.db.entity.UserAndLeagues
 
@@ -15,6 +16,9 @@ interface UserDao {
     @Query("SELECT * FROM User WHERE username = :username")
     suspend fun getUser(username: String): User?
 
+    @Query("SELECT * FROM User WHERE type = :type")
+    suspend fun getUsersWithType(type: FantasyProvider): List<User>
+
     @Transaction
     @Query("SELECT * FROM User WHERE username = :username")
     suspend fun getUserAndLeagues(username: String): UserAndLeagues?
@@ -26,5 +30,5 @@ interface UserDao {
     suspend fun insert(vararg users: User): List<Long>
 
     @Delete
-    suspend fun delete(user: User)
+    suspend fun delete(vararg user: User)
 }

@@ -12,15 +12,25 @@ import java.util.*
 object SleeperRepository {
     val db: AppDatabase = AppDatabase.instance
 
+    suspend fun getPlayersAndLeaguesInitial(): List<PlayerAndLeagues> {
+        val sleeperUsers = db.userDao().getUsersWithType(FantasyProvider.sleeper)
+        val sleeperLeagues = db.leagueDao().getLeaguesForUsers(sleeperUsers.map { it.userId })
+        val playersForLeagues = db.playerLeagueCrossRefDao().getEntriesForLeagues(sleeperLeagues.map { it.leagueId })
+        db.playerLeagueCrossRefDao().delete(*playersForLeagues.toTypedArray())
+
+        return getPlayersAndLeagues()
+    }
+
     suspend fun getPlayersAndLeagues(): List<PlayerAndLeagues> {
         val queriedResults = db.playerDao().getPlayersAndLeagues()
 
         return if (queriedResults.isNotEmpty()) queriedResults else {
             val queriedUsers = db.userDao().getAll()
+            val prefs = PreferenceManager.getDefaultSharedPreferences(MainApplication.getContext())
 
             val users = if (queriedUsers.isNotEmpty()) queriedUsers else {
                 //TODO: save and query out the username stuff from SharedPrefs next
-                listOf(getUser("apederson94"))
+                listOf(getUser(prefs.getString("sleeperUsername", "") ?: return emptyList()))
             }
 
             users.forEach { user ->

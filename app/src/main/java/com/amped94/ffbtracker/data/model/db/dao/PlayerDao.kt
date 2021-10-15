@@ -28,5 +28,5 @@ interface PlayerDao {
     suspend fun insert(vararg player: Player): List<Long>
 
     @Delete
-    suspend fun delete(player: Player)
+    suspend fun delete(vararg player: Player)
 }

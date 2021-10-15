@@ -5,12 +5,16 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.preference.PreferenceManager
 import com.amped94.ffbtracker.data.model.ui.Screen
+import com.amped94.ffbtracker.data.model.viewModel.MainViewModel
 import com.amped94.ffbtracker.ui.composable.Account
 import com.amped94.ffbtracker.ui.composable.AddLeague
 import com.amped94.ffbtracker.ui.composable.BottomBar
@@ -36,6 +40,7 @@ class MainActivity : ComponentActivity() {
         val prefs = PreferenceManager.getDefaultSharedPreferences(MainApplication.getContext())
         val username = prefs.getString("sleeperUsername", "")
         val navController = rememberNavController()
+        val viewModel by remember { mutableStateOf(MainViewModel()) }
 
         Scaffold(
             topBar = {
@@ -50,7 +55,7 @@ class MainActivity : ComponentActivity() {
                     Account()
                 }
                 composable(Screen.Players.route) {
-                    PlayersList()
+                    PlayersList(viewModel)
                 }
                 composable(Screen.Leagues.route) {
                     AddLeague()
