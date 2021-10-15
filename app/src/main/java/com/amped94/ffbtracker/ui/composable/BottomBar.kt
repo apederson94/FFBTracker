@@ -38,11 +38,15 @@ fun BottomBar(navController: NavController) {
                     }
                 },
                 icon = {
-                    Icon(screen.img, screen.title)
+                    screen.img?.let {
+                        Icon(it, screen.title)
+                    }
                 },
                 label = {
-                    Text(screen.title)
-                }
+                    screen.title?.let {
+                        Text(it)
+                    }
+                },
             )
         }
     }

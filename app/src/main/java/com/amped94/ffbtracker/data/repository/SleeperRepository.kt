@@ -29,8 +29,8 @@ object SleeperRepository {
             val prefs = PreferenceManager.getDefaultSharedPreferences(MainApplication.getContext())
 
             val users = if (queriedUsers.isNotEmpty()) queriedUsers else {
-                //TODO: save and query out the username stuff from SharedPrefs next
-                listOf(getUser(prefs.getString("sleeperUsername", "") ?: return emptyList()))
+                val username = prefs.getString("sleeperUsername", "")
+                if (username.isNullOrEmpty()) return emptyList() else listOf(getUser(username))
             }
 
             users.forEach { user ->
@@ -138,7 +138,8 @@ object SleeperRepository {
                     lastName = it.value.lastName,
                     age = it.value.age ?: 0,
                     number = it.value.number ?: 0,
-                    team = it.value.team ?: "NO TEAM"
+                    team = it.value.team ?: "NO TEAM",
+                    position = it.value.position ?: ""
                 )
             }
             db.playerDao().insert(*roomPlayers.toTypedArray())

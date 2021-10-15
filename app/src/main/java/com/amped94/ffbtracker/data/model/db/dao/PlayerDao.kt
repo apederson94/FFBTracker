@@ -4,6 +4,7 @@ import androidx.room.*
 import com.amped94.ffbtracker.data.api.model.SleeperPlayer
 import com.amped94.ffbtracker.data.model.db.entity.Player
 import com.amped94.ffbtracker.data.model.db.entity.PlayerAndLeagues
+import com.amped94.ffbtracker.data.model.viewModel.Position
 
 @Dao
 interface PlayerDao {
@@ -15,6 +16,9 @@ interface PlayerDao {
 
     @Query("SELECT * FROM Player WHERE playerId IN (:ids)")
     suspend fun getPlayers(ids: List<String>): List<Player>
+
+    @Query("SELECT * FROM Player WHERE firstName OR lastName LIKE '%' || :searchText || '%'")
+    suspend fun searchPlayers(searchText: String): List<Player>
 
     @Transaction
     @Query("SELECT * FROM Player WHERE playerId IN (SELECT playerId FROM PlayerLeagueCrossRef)")

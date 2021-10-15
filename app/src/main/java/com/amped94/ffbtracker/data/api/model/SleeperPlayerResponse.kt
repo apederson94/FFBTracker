@@ -42,6 +42,9 @@ data class SleeperPlayer(
     @SerialName("birth_date")
     val birthDate: String? = null,
 
+    @SerialName("position")
+    val position: String? = null,
+
     @SerialName("gsis_id")
     val gsisID: String? = null,
 

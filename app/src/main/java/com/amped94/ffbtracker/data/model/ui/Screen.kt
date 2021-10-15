@@ -4,7 +4,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.ui.graphics.vector.ImageVector
 
-sealed class Screen(val route: String, val img: ImageVector, val title: String) {
+sealed class Screen(val route: String, val img: ImageVector? = null, val title: String? = null) {
     object Account : Screen(
         route = "account",
         img = Icons.Filled.AccountCircle,
@@ -19,5 +19,15 @@ sealed class Screen(val route: String, val img: ImageVector, val title: String) 
         route = "leagues",
         img = Icons.Filled.Edit,
         title = "Leagues"
-    )
+    ) {
+        object View : Screen(
+            route = "leagues/view",
+            img = Icons.Filled.Edit,
+            title = "Leagues"
+        )
+        object Add: Screen(
+            route = "leagues/add"
+        )
+    }
+
 }

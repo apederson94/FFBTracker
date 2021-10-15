@@ -10,6 +10,7 @@ data class Player(
     val firstName: String,
     val lastName: String,
     val age: Long,
+    val position: String,
     val number: Long,
     val team: String
 )
