@@ -11,6 +11,7 @@ import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.amped94.ffbtracker.data.model.ui.Screen
+import com.amped94.ffbtracker.util.screenIsInStack
 
 @Composable
 fun BottomBar(navController: NavController) {
@@ -21,7 +22,7 @@ fun BottomBar(navController: NavController) {
     BottomAppBar {
         navItems.forEach { screen ->
             BottomNavigationItem(
-                selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
+                selected = navBackStackEntry?.screenIsInStack(screen) == true,
                 onClick = {
                     navController.navigate(screen.route) {
                         // Pop up to the start destination of the graph to

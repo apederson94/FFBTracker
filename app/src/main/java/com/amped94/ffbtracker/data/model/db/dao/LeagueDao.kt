@@ -2,6 +2,7 @@ package com.amped94.ffbtracker.data.model.db.dao
 
 import androidx.room.*
 import com.amped94.ffbtracker.data.model.db.entity.League
+import com.amped94.ffbtracker.data.model.db.entity.LeagueAndPlayers
 import com.amped94.ffbtracker.data.model.db.entity.User
 
 @Dao
@@ -20,6 +21,10 @@ interface LeagueDao {
 
     @Query("SELECT * FROM League WHERE associatedUserId IN (:userIds)")
     suspend fun getLeaguesForUsers(userIds: List<Long>): List<League>
+
+    @Transaction
+    @Query("SELECT * FROM League")
+    suspend fun getAllLeaguesAndPlayers(): List<LeagueAndPlayers>
 
     @Update
     suspend fun updateLeague(league: League)

@@ -28,6 +28,9 @@ sealed class Screen(val route: String, val img: ImageVector? = null, val title: 
         object Add: Screen(
             route = "leagues/add"
         )
+        object Edit: Screen(
+            route = "leagues/edit"
+        )
     }
 
 }

@@ -89,7 +89,8 @@ object SleeperRepository {
                         leagueId = 0,
                         externalLeagueId = it.leagueId,
                         associatedUserId = user.userId,
-                        name = it.name
+                        name = it.name,
+                        type = FantasyProvider.sleeper
                     )
                 )
             }
@@ -147,7 +148,9 @@ object SleeperRepository {
         }
     }
 
-    suspend fun getCrossRefs(): List<PlayerLeagueCrossRef> {
-        return db.playerLeagueCrossRefDao().getAll()
+    suspend fun getLeaguesAndPlayers(): List<LeagueAndPlayers> {
+        val leaguesAndPlayers = db.leagueDao().getAllLeaguesAndPlayers()
+
+        return leaguesAndPlayers
     }
 }

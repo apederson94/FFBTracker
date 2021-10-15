@@ -22,6 +22,7 @@ import com.amped94.ffbtracker.ui.composable.BottomBar
 import com.amped94.ffbtracker.ui.composable.Leagues
 import com.amped94.ffbtracker.ui.composable.PlayersList
 import com.amped94.ffbtracker.ui.theme.FFBTrackerTheme
+import com.amped94.ffbtracker.util.screenIsShowing
 
 class MainActivity : ComponentActivity() {
 
@@ -51,7 +52,7 @@ class MainActivity : ComponentActivity() {
                 BottomBar(navController = navController)
             },
             floatingActionButton = {
-                if (currentBackstack?.destination?.route == Screen.Leagues.View.route) {
+                if (currentBackstack?.screenIsShowing(Screen.Leagues.View) == true) {
                     FloatingActionButton(onClick = {
                         navController.navigate(Screen.Leagues.Add.route) {
                             restoreState = true
@@ -60,7 +61,7 @@ class MainActivity : ComponentActivity() {
                         Icon(Icons.Filled.Add, "Add League")
                     }
                 }
-            }
+            },
         ) {
             NavHost(navController = navController, startDestination = Screen.Players.route) {
                 composable(Screen.Account.route) {

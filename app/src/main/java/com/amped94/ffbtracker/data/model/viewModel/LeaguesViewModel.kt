@@ -1,23 +1,26 @@
 package com.amped94.ffbtracker.data.model.viewModel
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.amped94.ffbtracker.data.model.db.entity.LeagueAndPlayers
 import com.amped94.ffbtracker.data.model.db.entity.Player
+import com.amped94.ffbtracker.data.repository.SleeperRepository
+import kotlinx.coroutines.launch
 
 class LeaguesViewModel : ViewModel() {
     val leagueName: MutableLiveData<String> = MutableLiveData("")
-    val players: MutableLiveData<Player> = MutableLiveData()
-    val positions = listOf(
-        Position.SuperFLEX.QB,
-        Position.SuperFLEX.FLEX.RB,
-        Position.SuperFLEX.FLEX.RB,
-        Position.SuperFLEX.FLEX.WR,
-        Position.SuperFLEX.FLEX.WR,
-        Position.SuperFLEX.FLEX.TE,
-        Position.SuperFLEX.FLEX,
-        Position.K,
-        Position.DEF,
-    )
+
+    private val _leaguesAndPlayers: MutableLiveData<List<LeagueAndPlayers>> = MutableLiveData()
+    val leaguesAndPlayers: LiveData<List<LeagueAndPlayers>> = _leaguesAndPlayers
+
+    init {
+        viewModelScope.launch {
+            val queriedResults = SleeperRepository.getLeaguesAndPlayers()
+            _leaguesAndPlayers.postValue(queriedResults)
+        }
+    }
 }
 
 sealed class Position(val title: String) {
