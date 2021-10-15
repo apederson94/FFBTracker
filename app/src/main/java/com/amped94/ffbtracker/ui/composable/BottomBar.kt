@@ -3,6 +3,7 @@ package com.amped94.ffbtracker.ui.composable
 import androidx.compose.material.BottomAppBar
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Icon
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.navigation.NavController
@@ -15,7 +16,7 @@ import com.amped94.ffbtracker.data.model.ui.Screen
 fun BottomBar(navController: NavController) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
-    val navItems = listOf(Screen.Account, Screen.Players, Screen.AddLeague)
+    val navItems = listOf(Screen.Account, Screen.Players, Screen.Leagues)
 
     BottomAppBar {
         navItems.forEach { screen ->
@@ -38,6 +39,9 @@ fun BottomBar(navController: NavController) {
                 },
                 icon = {
                     Icon(screen.img, screen.title)
+                },
+                label = {
+                    Text(screen.title)
                 }
             )
         }

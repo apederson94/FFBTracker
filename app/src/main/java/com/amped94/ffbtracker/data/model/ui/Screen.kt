@@ -1,9 +1,7 @@
 package com.amped94.ffbtracker.data.model.ui
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.AddCircle
-import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.*
 import androidx.compose.ui.graphics.vector.ImageVector
 
 sealed class Screen(val route: String, val img: ImageVector, val title: String) {
@@ -14,12 +12,12 @@ sealed class Screen(val route: String, val img: ImageVector, val title: String) 
     )
     object Players : Screen(
         route = "players",
-        img = Icons.Filled.Person,
+        img = Icons.Filled.List,
         title = "Players"
     )
-    object AddLeague : Screen(
-        route = "addLeague",
-        img = Icons.Filled.AddCircle,
-        title = "Add League"
+    object Leagues : Screen(
+        route = "leagues",
+        img = Icons.Filled.Edit,
+        title = "Leagues"
     )
 }
