@@ -26,6 +26,9 @@ interface LeagueDao {
     @Query("SELECT * FROM League")
     suspend fun getAllLeaguesAndPlayers(): List<LeagueAndPlayers>
 
+    @Query("SELECT * FROM League WHERE leagueId = (SELECT MAX(leagueId) FROM League)")
+    suspend fun getLatestleague(): League?
+
     @Update
     suspend fun updateLeague(league: League)
 

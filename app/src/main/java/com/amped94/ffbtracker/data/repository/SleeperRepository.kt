@@ -101,7 +101,7 @@ object SleeperRepository {
                         "TE" -> numTE++
                         "FLEX" -> numFLEX++
                         "K" -> numK++
-                        "DST" -> numDST++
+                        "DEF" -> numDST++
                         "SUPER_FLEX" -> numSuperFLEX++
                         "BN" -> numBench++
                     }
@@ -188,5 +188,13 @@ object SleeperRepository {
 
     suspend fun saveLeague(league: League) {
         db.leagueDao().insert(league)
+    }
+
+    suspend fun getLatestLeague(): League {
+        return db.leagueDao().getLatestleague()!!
+    }
+
+    suspend fun savePlayersToLeague(crossRefs: List<PlayerLeagueCrossRef>) {
+        db.playerLeagueCrossRefDao().insert(*crossRefs.toTypedArray())
     }
 }

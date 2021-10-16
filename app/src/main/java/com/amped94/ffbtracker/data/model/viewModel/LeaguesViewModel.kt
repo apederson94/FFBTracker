@@ -35,5 +35,6 @@ sealed class Position(val title: String) {
     }
 
     object K : Position(title = "K")
-    object DEF : Position(title = "D/ST")
+    object DST : Position(title = "D/ST")
+    object Bench : Position(title = "Bench")
 }

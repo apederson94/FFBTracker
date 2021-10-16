@@ -5,7 +5,10 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
+import androidx.compose.material.Card
+import androidx.compose.material.Icon
+import androidx.compose.material.OutlinedTextField
+import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.runtime.Composable
@@ -78,7 +81,6 @@ fun LeagueCard(data: LeagueAndPlayers) {
                 }
             }
 
-
             if (!isCollapsed.value) {
                 data.players.forEach { player ->
                     Text(
@@ -92,7 +94,8 @@ fun LeagueCard(data: LeagueAndPlayers) {
 }
 
 @Composable
-fun PlayerField(type: Position, viewModel: PlayerFieldViewModel) {
+fun PlayerField(type: Position) {
+    val viewModel by remember { mutableStateOf(PlayerFieldViewModel()) }
     val suggestions by viewModel.autofillSuggestions.observeAsState()
     val text by viewModel.text.observeAsState()
 
@@ -110,9 +113,11 @@ fun PlayerField(type: Position, viewModel: PlayerFieldViewModel) {
             }
         )
         suggestions?.forEach {
-            Button(onClick = { viewModel.selectPlayer(it) }) {
-                Text("${it.firstName} ${it.lastName}")
-            }
+            Text("${it.firstName} ${it.lastName}",
+                modifier = Modifier.clickable {
+                    viewModel.selectPlayer(it)
+                }.padding(8.dp)
+            )
         }
     }
 }
