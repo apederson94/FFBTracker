@@ -11,16 +11,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.*
-import androidx.navigation.compose.composable
-import androidx.preference.PreferenceManager
 import com.amped94.ffbtracker.data.model.ui.Screen
 import com.amped94.ffbtracker.data.model.viewModel.MainViewModel
-import com.amped94.ffbtracker.ui.composable.Account
-import com.amped94.ffbtracker.ui.composable.BottomBar
-import com.amped94.ffbtracker.ui.composable.Leagues
-import com.amped94.ffbtracker.ui.composable.PlayersList
+import com.amped94.ffbtracker.ui.composable.*
 import com.amped94.ffbtracker.ui.theme.FFBTrackerTheme
 import com.amped94.ffbtracker.util.screenIsShowing
 
@@ -70,13 +64,25 @@ class MainActivity : ComponentActivity() {
                 composable(Screen.Players.route) {
                     PlayersList(viewModel)
                 }
-                navigation(startDestination = Screen.Leagues.View.route, route = Screen.Leagues.route) {
+                navigation(
+                    startDestination = Screen.Leagues.View.route,
+                    route = Screen.Leagues.route
+                ) {
                     composable(Screen.Leagues.View.route) {
                         Leagues()
                     }
-                    composable(Screen.Leagues.Add.route) {
-                        Text("Add A League Here")
+                    navigation(
+                        startDestination = Screen.Leagues.Add.LeagueSpecs.route,
+                        route = Screen.Leagues.Add.route
+                    ) {
+                        composable(Screen.Leagues.Add.LeagueSpecs.route) {
+                            LeagueSpecs(navController)
+                        }
+                        composable(Screen.Leagues.Add.AddPlayersToLeague.route) {
+                            Text("ADD PLAYERS TO LEAGUE")
+                        }
                     }
+
                 }
             }
         }
