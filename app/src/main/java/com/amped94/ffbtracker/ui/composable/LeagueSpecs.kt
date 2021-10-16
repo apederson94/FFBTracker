@@ -10,13 +10,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.amped94.ffbtracker.data.model.db.FantasyProvider
+import com.amped94.ffbtracker.data.model.db.entity.League
 import com.amped94.ffbtracker.data.model.ui.Screen
 import com.amped94.ffbtracker.data.model.viewModel.LeagueSpecsViewModel
+import com.amped94.ffbtracker.data.repository.SleeperRepository
 
 @Composable
 fun LeagueSpecs(navController: NavController) {
     val viewModel by remember { mutableStateOf(LeagueSpecsViewModel()) }
-    var leagueName by remember { mutableStateOf(TextFieldValue()) }
+    val leagueName by viewModel.leagueName.observeAsState()
     val numberOfQB by viewModel.numberOfQB.observeAsState()
     val numberOfRB by viewModel.numberOfRB.observeAsState()
     val numberOfWR by viewModel.numberOfWR.observeAsState()
@@ -29,8 +32,8 @@ fun LeagueSpecs(navController: NavController) {
 
     Column(modifier = Modifier.padding(8.dp)) {
         OutlinedTextField(
-            value = leagueName,
-            onValueChange = { leagueName = it },
+            value = leagueName!!,
+            onValueChange = { viewModel.leagueName.postValue(it) },
             label = {
                 Text("League Name")
             }, modifier = Modifier.padding(bottom = 8.dp)
@@ -73,9 +76,12 @@ fun LeagueSpecs(navController: NavController) {
         }
 
         Button(onClick = {
+            viewModel.saveLeague()
             navController.navigate(Screen.Leagues.Add.AddPlayersToLeague.route)
-        }, modifier = Modifier.fillMaxWidth().padding(top = 8.dp)) {
-            Text("Continue")
+        }, modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 8.dp)) {
+            Text("Save & Continue")
         }
     }
 }

@@ -1,6 +1,5 @@
 package com.amped94.ffbtracker.data.repository
 
-import android.content.SharedPreferences
 import androidx.preference.PreferenceManager
 import com.amped94.ffbtracker.MainApplication
 import com.amped94.ffbtracker.data.api.SleeperApi
@@ -13,7 +12,7 @@ object SleeperRepository {
     val db: AppDatabase = AppDatabase.instance
 
     suspend fun getPlayersAndLeaguesInitial(): List<PlayerAndLeagues> {
-        val sleeperUsers = db.userDao().getUsersWithType(FantasyProvider.sleeper)
+        val sleeperUsers = db.userDao().getUsersWithType(FantasyProvider.Sleeper)
         val sleeperLeagues = db.leagueDao().getLeaguesForUsers(sleeperUsers.map { it.userId })
         val playersForLeagues = db.playerLeagueCrossRefDao().getEntriesForLeagues(sleeperLeagues.map { it.leagueId })
         db.playerLeagueCrossRefDao().delete(*playersForLeagues.toTypedArray())
@@ -83,14 +82,47 @@ object SleeperRepository {
             val leaguesResponse = SleeperApi.getSleeperLeagues(user.accountId)
             val leaguesToInsert = mutableListOf<League>()
 
-            leaguesResponse.forEach {
+            leaguesResponse.forEach { league ->
+                var numQB = 0
+                var numRB = 0
+                var numWR = 0
+                var numTE = 0
+                var numFLEX = 0
+                var numK = 0
+                var numDST = 0
+                var numSuperFLEX = 0
+                var numBench = 0
+
+                league.rosterPositions.forEach {
+                    when (it) {
+                        "QB" -> numQB++
+                        "RB" -> numRB++
+                        "WR" -> numWR++
+                        "TE" -> numTE++
+                        "FLEX" -> numFLEX++
+                        "K" -> numK++
+                        "DST" -> numDST++
+                        "SUPER_FLEX" -> numSuperFLEX++
+                        "BN" -> numBench++
+                    }
+                }
+
                 leaguesToInsert.add(
                     League(
                         leagueId = 0,
-                        externalLeagueId = it.leagueId,
+                        externalLeagueId = league.leagueId,
                         associatedUserId = user.userId,
-                        name = it.name,
-                        type = FantasyProvider.sleeper
+                        name = league.name,
+                        type = FantasyProvider.Sleeper,
+                        numQB = numQB,
+                        numRB = numRB,
+                        numWR = numWR,
+                        numTE = numTE,
+                        numFLEX = numFLEX,
+                        numK = numK,
+                        numDST = numDST,
+                        numSuperFLEX = numSuperFLEX,
+                        numBench = numBench
                     )
                 )
             }
@@ -110,7 +142,7 @@ object SleeperRepository {
                 User(
                     userId = 0,
                     username = userResponse.username,
-                    type = FantasyProvider.sleeper,
+                    type = FantasyProvider.Sleeper,
                     accountId = userResponse.userId
                 )
             ).first()
@@ -152,5 +184,9 @@ object SleeperRepository {
         val leaguesAndPlayers = db.leagueDao().getAllLeaguesAndPlayers()
 
         return leaguesAndPlayers
+    }
+
+    suspend fun saveLeague(league: League) {
+        db.leagueDao().insert(league)
     }
 }

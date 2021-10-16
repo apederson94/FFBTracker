@@ -6,5 +6,6 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class SleeperLeagueResponse(
     @SerialName("league_id") val leagueId: String,
-    val name: String
+    val name: String,
+    @SerialName("roster_positions") val rosterPositions: List<String>
 )

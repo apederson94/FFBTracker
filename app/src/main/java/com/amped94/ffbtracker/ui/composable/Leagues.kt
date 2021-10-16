@@ -66,7 +66,7 @@ fun LeagueCard(data: LeagueAndPlayers) {
                     fontSize = 18.sp
                 )
 
-                if (data.league.type == FantasyProvider.other) {
+                if (data.league.type == FantasyProvider.Custom) {
                     Row(modifier = Modifier.align(CenterVertically)) {
                         Icon(Icons.Default.Edit, "Edit League", modifier = Modifier
                             .clickable {

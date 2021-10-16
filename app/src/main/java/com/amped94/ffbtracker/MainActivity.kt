@@ -79,7 +79,7 @@ class MainActivity : ComponentActivity() {
                             LeagueSpecs(navController)
                         }
                         composable(Screen.Leagues.Add.AddPlayersToLeague.route) {
-                            Text("ADD PLAYERS TO LEAGUE")
+                            AddPlayersToLeague()
                         }
                     }
 
