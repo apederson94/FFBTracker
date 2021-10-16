@@ -20,6 +20,9 @@ interface PlayerDao {
     @Query("SELECT * FROM Player WHERE firstName LIKE '%' || :searchText || '%' OR lastName LIKE '%' || :searchText || '%'")
     suspend fun searchPlayers(searchText: String): List<Player>
 
+    @Query("SELECT * FROM Player WHERE position = :position AND (lastName LIKE '%' || :searchText || '%' OR firstName LIKE '%' || :searchText || '%')")
+    suspend fun searchPlayersByPosition(position: String, searchText: String): List<Player>
+
     @Transaction
     @Query("SELECT * FROM Player WHERE playerId IN (SELECT playerId FROM PlayerLeagueCrossRef)")
     suspend fun getPlayersAndLeagues(): List<PlayerAndLeagues>

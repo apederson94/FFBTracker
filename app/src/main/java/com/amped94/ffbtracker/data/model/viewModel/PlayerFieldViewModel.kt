@@ -1,6 +1,5 @@
 package com.amped94.ffbtracker.data.model.viewModel
 
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -8,14 +7,25 @@ import com.amped94.ffbtracker.data.model.db.entity.Player
 import com.amped94.ffbtracker.data.repository.SleeperRepository
 import kotlinx.coroutines.launch
 
-class PlayerFieldViewModel: ViewModel() {
+class PlayerFieldViewModel : ViewModel() {
     val text = MutableLiveData("")
     val selectedPlayer = MutableLiveData<Player>()
     val autofillSuggestions: MutableLiveData<List<Player>> = MutableLiveData()
 
-    fun getAutofillSuggestions(searchText: String) {
+    fun getAutofillSuggestions(position: Position, searchText: String) {
         viewModelScope.launch {
-            val suggestions = SleeperRepository.db.playerDao().searchPlayers(searchText)
+            val suggestions =
+                if (
+                    position != Position.Bench
+                    && position != Position.SuperFLEX
+                    && position != Position.SuperFLEX.FLEX
+                ) {
+                    val searchPosition = if (position == Position.DST) "DEF" else position.title
+                    SleeperRepository.db.playerDao()
+                        .searchPlayersByPosition(searchPosition, searchText)
+                } else {
+                    SleeperRepository.db.playerDao().searchPlayers(searchText)
+                }
             autofillSuggestions.postValue(suggestions)
         }
     }

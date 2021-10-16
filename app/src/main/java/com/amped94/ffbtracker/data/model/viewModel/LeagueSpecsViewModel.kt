@@ -22,23 +22,25 @@ class LeagueSpecsViewModel : ViewModel() {
     val numberOfBench = MutableLiveData(7)
 
     fun saveLeague() {
-        viewModelScope.launch {
-            SleeperRepository.saveLeague(League(
-                leagueId = 0,
-                externalLeagueId = "",
-                associatedUserId = -1,
-                name = leagueName.value?.text ?: "",
-                type = FantasyProvider.Custom,
-                numQB = numberOfQB.value ?: 0,
-                numRB = numberOfRB.value ?: 0,
-                numWR = numberOfWR.value ?: 0,
-                numTE = numberOfTE.value ?: 0,
-                numFLEX = numberOfFLEX.value ?: 0,
-                numK = numberOfK.value ?: 0,
-                numDST = numberOfDST.value ?: 0,
-                numSuperFLEX = numberOfSuperFLEX.value ?: 0,
-                numBench = numberOfBench.value ?: 0,
-            ))
+        if (!leagueName.value?.text.isNullOrEmpty()) {
+            viewModelScope.launch {
+                SleeperRepository.saveLeague(League(
+                    leagueId = 0,
+                    externalLeagueId = "",
+                    associatedUserId = -1,
+                    name = leagueName.value?.text ?: "",
+                    type = FantasyProvider.Custom,
+                    numQB = numberOfQB.value ?: 0,
+                    numRB = numberOfRB.value ?: 0,
+                    numWR = numberOfWR.value ?: 0,
+                    numTE = numberOfTE.value ?: 0,
+                    numFLEX = numberOfFLEX.value ?: 0,
+                    numK = numberOfK.value ?: 0,
+                    numDST = numberOfDST.value ?: 0,
+                    numSuperFLEX = numberOfSuperFLEX.value ?: 0,
+                    numBench = numberOfBench.value ?: 0,
+                ))
+            }
         }
     }
 }

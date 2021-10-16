@@ -7,7 +7,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.Icon
-import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
@@ -24,8 +23,6 @@ import androidx.compose.ui.unit.sp
 import com.amped94.ffbtracker.data.model.db.FantasyProvider
 import com.amped94.ffbtracker.data.model.db.entity.LeagueAndPlayers
 import com.amped94.ffbtracker.data.model.viewModel.LeaguesViewModel
-import com.amped94.ffbtracker.data.model.viewModel.PlayerFieldViewModel
-import com.amped94.ffbtracker.data.model.viewModel.Position
 
 @Composable
 fun Leagues() {
@@ -89,35 +86,6 @@ fun LeagueCard(data: LeagueAndPlayers) {
                     )
                 }
             }
-        }
-    }
-}
-
-@Composable
-fun PlayerField(type: Position) {
-    val viewModel by remember { mutableStateOf(PlayerFieldViewModel()) }
-    val suggestions by viewModel.autofillSuggestions.observeAsState()
-    val text by viewModel.text.observeAsState()
-
-    Column {
-        OutlinedTextField(
-            value = text ?: "",
-            onValueChange = {
-                if (it.length > 2) {
-                    viewModel.getAutofillSuggestions(it)
-                }
-                viewModel.text.postValue(it)
-            },
-            label = {
-                Text(type.title)
-            }
-        )
-        suggestions?.forEach {
-            Text("${it.firstName} ${it.lastName}",
-                modifier = Modifier.clickable {
-                    viewModel.selectPlayer(it)
-                }.padding(8.dp)
-            )
         }
     }
 }

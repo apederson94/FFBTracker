@@ -1,8 +1,10 @@
 package com.amped94.ffbtracker
 
 import android.os.Bundle
+import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -10,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.*
 import com.amped94.ffbtracker.data.model.ui.Screen
@@ -22,6 +25,9 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        window.decorView.fitsSystemWindows = true
+
         setContent {
             FFBTrackerTheme {
                 // A surface container using the 'background' color from the theme
@@ -56,8 +62,8 @@ class MainActivity : ComponentActivity() {
                     }
                 }
             },
-        ) {
-            NavHost(navController = navController, startDestination = Screen.Players.route) {
+        ) { innerPadding ->
+            NavHost(navController = navController, startDestination = Screen.Players.route, modifier = Modifier.padding(innerPadding)) {
                 composable(Screen.Account.route) {
                     Account()
                 }
@@ -79,7 +85,7 @@ class MainActivity : ComponentActivity() {
                             LeagueSpecs(navController)
                         }
                         composable(Screen.Leagues.Add.AddPlayersToLeague.route) {
-                            AddPlayersToLeague()
+                            AddPlayersToLeague(navController)
                         }
                     }
 
