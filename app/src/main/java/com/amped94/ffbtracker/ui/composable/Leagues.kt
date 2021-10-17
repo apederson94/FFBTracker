@@ -88,10 +88,10 @@ fun LeagueCard(data: LeagueAndPlayers) {
             }
 
             if (!isCollapsed.value) {
-                data.players.forEach { player ->
+                data.players.sortedBy { it.lastName }.forEach { player ->
                     Text(
-                        "${player.firstName} ${player.lastName}",
-                        modifier = Modifier.fillMaxWidth()
+                        "${player.lastName}, ${player.firstName}",
+                        modifier = Modifier.fillMaxWidth().padding(horizontal = 32.dp, vertical = 4.dp)
                     )
                 }
             }
