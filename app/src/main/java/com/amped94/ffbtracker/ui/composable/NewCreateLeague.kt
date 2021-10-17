@@ -48,10 +48,14 @@ fun NewCreateLeague() {
             )
         }
 
-        items(viewModel.selectedPlayers) { item ->
+        items(
+            items = viewModel.selectedPlayers,
+            key = { it.id }
+        ) { item ->
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.fillMaxWidth()
             ) {
                 Text(item.position.title, modifier = Modifier.padding(end = 8.dp))
                 OutlinedTextField(
@@ -61,6 +65,13 @@ fun NewCreateLeague() {
                         Text("Player Name")
                     },
                     enabled = false,
+                )
+                Icon(
+                    imageVector = Icons.Filled.Close,
+                    contentDescription = "",
+                    modifier = Modifier.clickable {
+                        viewModel.selectedPlayers.remove(item)
+                    }
                 )
             }
         }

@@ -13,7 +13,8 @@ import java.util.*
 
 data class SelectedPlayer(
     val player: Player,
-    var position: Position
+    var position: Position,
+    val id: UUID = UUID.randomUUID()
 )
 
 data class PlayerSelectionField(
