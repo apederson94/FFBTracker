@@ -22,7 +22,6 @@ import com.amped94.ffbtracker.data.model.viewModel.SelectedPlayer
 @Composable
 fun NewCreateLeague() {
     val viewModel by remember { mutableStateOf(NewCreateLeagueViewModel()) }
-    var leagueName by remember { mutableStateOf(TextFieldValue()) }
 
     LazyColumn(
         modifier = Modifier
@@ -31,8 +30,8 @@ fun NewCreateLeague() {
     ) {
         item {
             OutlinedTextField(
-                value = leagueName,
-                onValueChange = { leagueName = it },
+                value = viewModel.leagueName.value,
+                onValueChange = { viewModel.leagueName.value = it },
                 label = {
                     Text("League Name")
                 },
@@ -130,6 +129,8 @@ fun SelectedPlayerRow(item: PlayerSelectionField, viewModel: NewCreateLeagueView
                     item.textFieldValue.value = it
                     if (item.textFieldValue.value.text.length > 2) {
                         viewModel.getSuggestions(item)
+                    } else {
+                        item.suggestions.clear()
                     }
                 },
                 label = {
