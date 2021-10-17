@@ -192,6 +192,17 @@ object SleeperRepository {
         db.leagueDao().insert(league)
     }
 
+    suspend fun saveLeagueAndPlayers(league: League, players: List<Player>) {
+        val newLeagueId = db.leagueDao().insert(league).first()
+        val crossRefs = players.map {
+            PlayerLeagueCrossRef(
+                playerId = it.playerId,
+                leagueId = newLeagueId
+            )
+        }
+        db.playerLeagueCrossRefDao().insert(*crossRefs.toTypedArray())
+    }
+
     suspend fun getLatestLeague(): League {
         return db.leagueDao().getLatestleague()!!
     }

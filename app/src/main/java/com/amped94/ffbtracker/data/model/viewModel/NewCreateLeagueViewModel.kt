@@ -6,6 +6,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.amped94.ffbtracker.data.model.db.FantasyProvider
+import com.amped94.ffbtracker.data.model.db.entity.League
 import com.amped94.ffbtracker.data.model.db.entity.Player
 import com.amped94.ffbtracker.data.repository.SleeperRepository
 import kotlinx.coroutines.launch
@@ -28,8 +30,9 @@ data class PlayerSelectionField(
 class NewCreateLeagueViewModel : ViewModel() {
     val selectedPlayers = mutableStateListOf<SelectedPlayer>()
     val addPlayerFields = mutableStateListOf<PlayerSelectionField>()
+    val leagueName = mutableStateOf(TextFieldValue(""))
 
-    fun getSugestions(selectionField: PlayerSelectionField) {
+    fun getSuggestions(selectionField: PlayerSelectionField) {
         viewModelScope.launch {
             val suggestions = SleeperRepository.searchPlayersByPositionAndName(
                 selectionField.position,
@@ -38,6 +41,53 @@ class NewCreateLeagueViewModel : ViewModel() {
                 selectedPlayers.none { it.player.playerId == player.playerId }
             }
             selectionField.suggestions = suggestions
+        }
+    }
+
+    fun saveLeague() {
+        var numQB = 0
+        var numRB = 0
+        var numWR = 0
+        var numTE = 0
+        var numFLEX = 0
+        var numK = 0
+        var numDST = 0
+        var numSuperFLEX = 0
+        var numBench = 0
+
+        selectedPlayers.forEach {
+            when (it.position) {
+                Position.QB -> numQB++
+                Position.RB -> numRB++
+                Position.WR -> numWR++
+                Position.TE -> numTE++
+                Position.FLEX -> numFLEX++
+                Position.K -> numK++
+                Position.DST -> numDST++
+                Position.SuperFLEX -> numSuperFLEX++
+                Position.Bench -> numBench++
+            }
+        }
+
+        val newLeague = League(
+            leagueId = 0,
+            externalLeagueId = "",
+            associatedUserId = -1,
+            name = leagueName.value.text,
+            type = FantasyProvider.Custom,
+            numQB =  numQB,
+            numRB = numRB,
+            numWR = numWR,
+            numTE = numTE,
+            numFLEX = numFLEX,
+            numK = numK,
+            numDST = numDST,
+            numSuperFLEX = numSuperFLEX,
+            numBench = numBench
+        )
+
+        viewModelScope.launch {
+            SleeperRepository.saveLeagueAndPlayers(newLeague, selectedPlayers.map{ it.player })
         }
     }
 }

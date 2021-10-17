@@ -8,6 +8,7 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Done
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -95,7 +96,7 @@ fun NewCreateLeague() {
                         onValueChange = {
                             item.textFieldValue.value = it
                             if (item.textFieldValue.value.text.length > 2) {
-                                viewModel.getSugestions(item)
+                                viewModel.getSuggestions(item)
                             }
                         },
                         label = {
@@ -136,6 +137,20 @@ fun NewCreateLeague() {
                 modifier = Modifier.padding(vertical = 8.dp)
             ) {
                 Text("Add Player")
+            }
+        }
+
+        item {
+            Button(
+                onClick = {
+                    viewModel.saveLeague()
+                }
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Done,
+                    contentDescription = ""
+                )
+                Text("Save & Finish")
             }
         }
     }
