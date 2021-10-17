@@ -24,19 +24,10 @@ fun NewCreateLeague() {
     val viewModel by remember { mutableStateOf(NewCreateLeagueViewModel()) }
     var leagueName by remember { mutableStateOf(TextFieldValue()) }
 
-    /***
-     * TODO: Let user add new positions as necessary
-     * i.e. tap a button at the buttom of the screen that lets you add another player
-     * add a dropdown menu next to each one of these new textfields that determines the position type
-     * after tapping the suggestion, change field to immutable and put an x next to it to remove the player
-     * starts with mutable text field with a dropdown next to it
-     * tap of suggestion turns it into an immutable textfield/view with an x next to it
-     * should make for easier creation of the league
-     * league name at the top of the screen
-     */
-
     LazyColumn(
-        modifier = Modifier.fillMaxWidth().padding(8.dp)
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp)
     ) {
         item {
             OutlinedTextField(
@@ -82,77 +73,92 @@ fun NewCreateLeague() {
             items = viewModel.addPlayerFields,
             key = { it.id }
         ) { item ->
+            SelectedPlayerRow(item = item, viewModel = viewModel)
+        }
+
+        item {
             Row(
-                verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                PositionDropdownMenu {
-                    item.position = it
+                Button(
+                    onClick = {
+                        viewModel.addPlayerFields.add(PlayerSelectionField())
+                    },
+                    modifier = Modifier.padding(vertical = 8.dp)
+                ) {
+                    Text("Add Player")
                 }
-                Column {
-                    OutlinedTextField(
-                        value = item.textFieldValue.value,
-                        onValueChange = {
-                            item.textFieldValue.value = it
-                            if (item.textFieldValue.value.text.length > 2) {
-                                viewModel.getSuggestions(item)
-                            }
-                        },
-                        label = {
-                            Text("Player Name")
-                        }
-                    )
-                    item.suggestions.forEach {
-                        Text(
-                            "${it.firstName} ${it.lastName}",
-                            modifier = Modifier.clickable {
-                                viewModel.selectedPlayers.add(
-                                    SelectedPlayer(
-                                        player = it,
-                                        position = item.position
-                                    )
-                                )
-                                viewModel.addPlayerFields.remove(item)
-                            }
-                        )
+                Button(
+                    onClick = {
+                        viewModel.saveLeague()
                     }
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Done,
+                        contentDescription = ""
+                    )
+                    Text("Save & Finish")
                 }
+            }
 
-                Icon(
-                    imageVector = Icons.Filled.Close,
-                    contentDescription = "",
+        }
+
+        item {
+            Row(modifier = Modifier.fillMaxWidth()) {
+
+            }
+        }
+    }
+}
+
+@Composable
+fun SelectedPlayerRow(item: PlayerSelectionField, viewModel: NewCreateLeagueViewModel) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        PositionDropdownMenu {
+            item.position = it
+        }
+        Column {
+            OutlinedTextField(
+                value = item.textFieldValue.value,
+                onValueChange = {
+                    item.textFieldValue.value = it
+                    if (item.textFieldValue.value.text.length > 2) {
+                        viewModel.getSuggestions(item)
+                    }
+                },
+                label = {
+                    Text("Player Name")
+                }
+            )
+            item.suggestions.forEach {
+                Text(
+                    "${it.firstName} ${it.lastName}",
                     modifier = Modifier.clickable {
+                        viewModel.selectedPlayers.add(
+                            SelectedPlayer(
+                                player = it,
+                                position = item.position
+                            )
+                        )
                         viewModel.addPlayerFields.remove(item)
                     }
                 )
             }
         }
 
-        item {
-            Button(
-                onClick = {
-                    viewModel.addPlayerFields.add(PlayerSelectionField())
-                },
-                modifier = Modifier.padding(vertical = 8.dp)
-            ) {
-                Text("Add Player")
+        Icon(
+            imageVector = Icons.Filled.Close,
+            contentDescription = "",
+            modifier = Modifier.clickable {
+                viewModel.addPlayerFields.remove(item)
             }
-        }
-
-        item {
-            Button(
-                onClick = {
-                    viewModel.saveLeague()
-                }
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.Done,
-                    contentDescription = ""
-                )
-                Text("Save & Finish")
-            }
-        }
+        )
     }
 }
 
