@@ -17,8 +17,7 @@ class PlayerFieldViewModel : ViewModel() {
             val suggestions =
                 if (
                     position != Position.Bench
-                    && position != Position.SuperFLEX
-                    && position != Position.SuperFLEX.FLEX
+                    && !position.isSuperFLEX()
                 ) {
                     val searchPosition = if (position == Position.DST) "DEF" else position.title
                     SleeperRepository.db.playerDao()

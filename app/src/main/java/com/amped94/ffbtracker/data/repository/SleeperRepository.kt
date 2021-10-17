@@ -6,6 +6,7 @@ import com.amped94.ffbtracker.data.api.SleeperApi
 import com.amped94.ffbtracker.data.model.db.AppDatabase
 import com.amped94.ffbtracker.data.model.db.FantasyProvider
 import com.amped94.ffbtracker.data.model.db.entity.*
+import com.amped94.ffbtracker.data.model.viewModel.Position
 import java.util.*
 
 object SleeperRepository {
@@ -14,7 +15,8 @@ object SleeperRepository {
     suspend fun getPlayersAndLeaguesInitial(): List<PlayerAndLeagues> {
         val sleeperUsers = db.userDao().getUsersWithType(FantasyProvider.Sleeper)
         val sleeperLeagues = db.leagueDao().getLeaguesForUsers(sleeperUsers.map { it.userId })
-        val playersForLeagues = db.playerLeagueCrossRefDao().getEntriesForLeagues(sleeperLeagues.map { it.leagueId })
+        val playersForLeagues =
+            db.playerLeagueCrossRefDao().getEntriesForLeagues(sleeperLeagues.map { it.leagueId })
         db.playerLeagueCrossRefDao().delete(*playersForLeagues.toTypedArray())
 
         return getPlayersAndLeagues()
@@ -196,5 +198,20 @@ object SleeperRepository {
 
     suspend fun savePlayersToLeague(crossRefs: List<PlayerLeagueCrossRef>) {
         db.playerLeagueCrossRefDao().insert(*crossRefs.toTypedArray())
+    }
+
+    suspend fun searchPlayersByPositionAndName(
+        position: Position,
+        searchText: String
+    ): List<Player> {
+        return if (
+            position != Position.Bench && position != Position.SuperFLEX
+        ) {
+            val searchPosition = if (position == Position.DST) "DEF" else position.title
+            db.playerDao()
+                .searchPlayersByPosition(searchPosition, searchText)
+        } else {
+            db.playerDao().searchPlayers(searchText)
+        }
     }
 }

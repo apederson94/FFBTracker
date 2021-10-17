@@ -78,7 +78,7 @@ class MainActivity : ComponentActivity() {
                         Leagues()
                     }
                     navigation(
-                        startDestination = Screen.Leagues.Add.LeagueSpecs.route,
+                        startDestination = Screen.Leagues.Add.Create.route,
                         route = Screen.Leagues.Add.route
                     ) {
                         composable(Screen.Leagues.Add.LeagueSpecs.route) {
@@ -86,6 +86,9 @@ class MainActivity : ComponentActivity() {
                         }
                         composable(Screen.Leagues.Add.AddPlayersToLeague.route) {
                             AddPlayersToLeague(navController)
+                        }
+                        composable(Screen.Leagues.Add.Create.route) {
+                            NewCreateLeague()
                         }
                     }
 

@@ -12,6 +12,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusState
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
@@ -29,11 +30,11 @@ fun AddPlayersToLeague(navController: NavController) {
     val suggestions by viewModel.suggestions.observeAsState()
     val fields = hashMapOf<Position, Int>().apply {
         league?.let { league ->
-            put(Position.SuperFLEX.QB, league.numQB)
-            put(Position.SuperFLEX.FLEX.RB, league.numRB)
-            put(Position.SuperFLEX.FLEX.WR, league.numWR)
-            put(Position.SuperFLEX.FLEX.TE, league.numTE)
-            put(Position.SuperFLEX.FLEX, league.numFLEX)
+            put(Position.QB, league.numQB)
+            put(Position.RB, league.numRB)
+            put(Position.WR, league.numWR)
+            put(Position.TE, league.numTE)
+            put(Position.FLEX, league.numFLEX)
             put(Position.K, league.numK)
             put(Position.DST, league.numDST)
             put(Position.SuperFLEX, league.numSuperFLEX)
@@ -48,31 +49,35 @@ fun AddPlayersToLeague(navController: NavController) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         val sortedFields = fields.toList().sortedBy {
-            when (it.first) {
-                Position.SuperFLEX.QB -> 0
-                Position.SuperFLEX.FLEX.RB -> 1
-                Position.SuperFLEX.FLEX.WR -> 2
-                Position.SuperFLEX.FLEX.TE -> 3
-                Position.SuperFLEX.FLEX -> 4
-                Position.K -> 5
-                Position.DST -> 6
-                Position.SuperFLEX -> 7
-                Position.Bench -> 8
-            }
+            it.first.ordinal
         }
 
         sortedFields.forEach { (position, numPlayers) ->
             items(numPlayers) { index ->
+                val key = "${position.title}$index"
                 PlayerField(
                     type = position,
                     suggestions = suggestions,
-                    selectedPlayer = viewModel.selectedPlayers["${position.title}$index"],
+                    selectedPlayer = viewModel.selectedPlayers[key],
                     getSuggestions = {
                         viewModel.getAutofillSuggestions(position, it)
                     },
+                    onFocusChanged = {
+
+                    }
                 ) { player ->
-                    viewModel.selectedPlayers["${position.title}$index"] = player
+                    viewModel.selectedPlayers[key] = player
                     viewModel.clearSuggestions()
+                }
+                suggestions?.forEach {
+                    Text(
+                        "${it.firstName} ${it.lastName}",
+                        modifier = Modifier
+                            .clickable {
+                                viewModel.selectedPlayers[key] = it
+                            }
+                            .padding(8.dp)
+                    )
                 }
             }
         }
@@ -99,6 +104,7 @@ fun PlayerField(
     suggestions: List<Player>?,
     selectedPlayer: Player?,
     getSuggestions: (String) -> Unit,
+    onFocusChanged: (FocusState) -> Unit,
     onPlayerSelected: (Player) -> Unit
 ) {
     var text by remember {
@@ -120,7 +126,7 @@ fun PlayerField(
                 Text(type.title)
             },
             modifier = Modifier.onFocusChanged {
-                showSuggestions = it.isFocused
+                onFocusChanged(it)
             }
         )
 

@@ -23,18 +23,36 @@ class LeaguesViewModel : ViewModel() {
     }
 }
 
-sealed class Position(val title: String) {
+enum class Position(val title: String) {
+    QB("QB"),
+    RB("RB"),
+    WR("WR"),
+    TE("TE"),
+    FLEX("FLEX"),
+    K("K"),
+    DST("DST"),
+    SuperFLEX("SuperFLEX"),
+    Bench("Bench");
 
-    object SuperFLEX : Position(title = "SuperFLEX") {
-        object QB : Position(title = "QB")
-        object FLEX : Position(title = "FLEX") {
-            object RB : Position(title = "RB")
-            object WR : Position(title = "WR")
-            object TE : Position(title = "TE")
-        }
+    fun isFLEX(): Boolean {
+        return this == RB || this == WR || this == TE
     }
 
-    object K : Position(title = "K")
-    object DST : Position(title = "D/ST")
-    object Bench : Position(title = "Bench")
+    fun isSuperFLEX(): Boolean {
+        return this == QB || isFLEX()
+    }
 }
+
+//sealed class Position(val title: String) {
+//    object SuperFLEX : Position(title = "SuperFLEX") {
+//        object QB : Position(title = "QB")
+//        object FLEX : Position(title = "FLEX") {
+//            object RB : Position(title = "RB")
+//            object WR : Position(title = "WR")
+//            object TE : Position(title = "TE")
+//        }
+//    }
+//    object K : Position(title = "K")
+//    object DST : Position(title = "D/ST")
+//    object Bench : Position(title = "Bench")
+//}
