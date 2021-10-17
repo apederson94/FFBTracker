@@ -1,5 +1,6 @@
 package com.amped94.ffbtracker.data.model.viewModel
 
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -12,6 +13,8 @@ class MainViewModel : ViewModel() {
 
     private var _playersAndLeagues: MutableLiveData<List<PlayerAndLeagues>> = MutableLiveData()
     val playersAndLeagues: LiveData<List<PlayerAndLeagues>> = _playersAndLeagues
+
+    var onFABTapped = mutableStateOf({})
 
     init {
         viewModelScope.launch {

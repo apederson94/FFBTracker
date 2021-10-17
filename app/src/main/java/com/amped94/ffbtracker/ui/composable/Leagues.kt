@@ -20,17 +20,27 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.amped94.ffbtracker.data.model.db.FantasyProvider
 import com.amped94.ffbtracker.data.model.db.entity.LeagueAndPlayers
+import com.amped94.ffbtracker.data.model.ui.Screen
 import com.amped94.ffbtracker.data.model.viewModel.LeaguesViewModel
+import com.amped94.ffbtracker.data.model.viewModel.MainViewModel
 
 @Composable
-fun Leagues() {
+fun Leagues(mainViewModel: MainViewModel, navController: NavController) {
     //TODO: create a VM
     //  VM will hold all the data for this screen
     //  VM will add/create/delete/edit other typed leagues
     val viewModel by remember { mutableStateOf(LeaguesViewModel()) }
     val leaguesAndPlayers by viewModel.leaguesAndPlayers.observeAsState()
+
+    mainViewModel.onFABTapped.value = {
+        navController.navigate(Screen.Leagues.Add.route) {
+            restoreState = true
+        }
+    }
+
     LazyColumn(modifier = Modifier.fillMaxSize()) {
         leaguesAndPlayers?.let {
             items(it) { data ->

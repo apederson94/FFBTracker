@@ -52,11 +52,10 @@ class MainActivity : ComponentActivity() {
                 BottomBar(navController = navController)
             },
             floatingActionButton = {
-                if (currentBackstack?.screenIsShowing(Screen.Leagues.View) == true) {
+                if (currentBackstack?.screenIsShowing(Screen.Leagues.View) == true
+                    || currentBackstack?.screenIsShowing(Screen.Leagues.Add.Create) == true) {
                     FloatingActionButton(onClick = {
-                        navController.navigate(Screen.Leagues.Add.route) {
-                            restoreState = true
-                        }
+                        viewModel.onFABTapped.value()
                     }) {
                         Icon(Icons.Filled.Add, "Add League")
                     }
@@ -75,7 +74,7 @@ class MainActivity : ComponentActivity() {
                     route = Screen.Leagues.route
                 ) {
                     composable(Screen.Leagues.View.route) {
-                        Leagues()
+                        Leagues(viewModel, navController)
                     }
                     navigation(
                         startDestination = Screen.Leagues.Add.Create.route,
@@ -88,7 +87,7 @@ class MainActivity : ComponentActivity() {
                             AddPlayersToLeague(navController)
                         }
                         composable(Screen.Leagues.Add.Create.route) {
-                            NewCreateLeague()
+                            NewCreateLeague(viewModel)
                         }
                     }
 

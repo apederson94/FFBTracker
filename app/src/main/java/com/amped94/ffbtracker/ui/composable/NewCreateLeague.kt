@@ -14,14 +14,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import com.amped94.ffbtracker.data.model.viewModel.NewCreateLeagueViewModel
-import com.amped94.ffbtracker.data.model.viewModel.PlayerSelectionField
-import com.amped94.ffbtracker.data.model.viewModel.Position
-import com.amped94.ffbtracker.data.model.viewModel.SelectedPlayer
+import com.amped94.ffbtracker.data.model.viewModel.*
 
 @Composable
-fun NewCreateLeague() {
+fun NewCreateLeague(mainViewModel: MainViewModel) {
     val viewModel by remember { mutableStateOf(NewCreateLeagueViewModel()) }
+    mainViewModel.onFABTapped.value = {
+        viewModel.addPlayerFields.add(PlayerSelectionField())
+    }
 
     LazyColumn(
         modifier = Modifier
@@ -103,12 +103,6 @@ fun NewCreateLeague() {
             }
 
         }
-
-        item {
-            Row(modifier = Modifier.fillMaxWidth()) {
-
-            }
-        }
     }
 }
 
@@ -168,12 +162,6 @@ fun PositionDropdownMenu(onPositionSelectionChanged: (Position) -> Unit) {
     var expanded by remember { mutableStateOf(false) }
     var selectedPosition by remember { mutableStateOf(Position.QB) }
 
-    fun setPosition(position: Position) {
-        onPositionSelectionChanged(position)
-        selectedPosition = position
-        expanded = false
-    }
-
     Row {
         Column {
             Button(onClick = { expanded = true }) {
@@ -183,32 +171,14 @@ fun PositionDropdownMenu(onPositionSelectionChanged: (Position) -> Unit) {
 
             if (expanded) {
                 DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-                    DropdownMenuItem(onClick = { setPosition(Position.QB) }) {
-                        Text(Position.QB.title)
-                    }
-                    DropdownMenuItem(onClick = { setPosition(Position.RB) }) {
-                        Text(Position.RB.title)
-                    }
-                    DropdownMenuItem(onClick = { setPosition(Position.WR) }) {
-                        Text(Position.WR.title)
-                    }
-                    DropdownMenuItem(onClick = { setPosition(Position.TE) }) {
-                        Text(Position.TE.title)
-                    }
-                    DropdownMenuItem(onClick = { setPosition(Position.FLEX) }) {
-                        Text(Position.FLEX.title)
-                    }
-                    DropdownMenuItem(onClick = { setPosition(Position.K) }) {
-                        Text(Position.K.title)
-                    }
-                    DropdownMenuItem(onClick = { setPosition(Position.DST) }) {
-                        Text(Position.DST.title)
-                    }
-                    DropdownMenuItem(onClick = { setPosition(Position.SuperFLEX) }) {
-                        Text(Position.SuperFLEX.title)
-                    }
-                    DropdownMenuItem(onClick = { setPosition(Position.Bench) }) {
-                        Text(Position.Bench.title)
+                    Position.values().forEach { position ->
+                        DropdownMenuItem(onClick = {
+                            onPositionSelectionChanged(position)
+                            selectedPosition = position
+                            expanded = false
+                        }) {
+                            Text(position.title)
+                        }
                     }
                 }
             }
