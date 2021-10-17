@@ -15,6 +15,7 @@ class MainViewModel : ViewModel() {
     val playersAndLeagues: LiveData<List<PlayerAndLeagues>> = _playersAndLeagues
 
     var onFABTapped = mutableStateOf({})
+    var title = mutableStateOf("FFBTracker")
 
     init {
         viewModelScope.launch {

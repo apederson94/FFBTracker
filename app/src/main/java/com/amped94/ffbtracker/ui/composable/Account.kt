@@ -11,12 +11,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.preference.PreferenceManager
 import com.amped94.ffbtracker.MainApplication
+import com.amped94.ffbtracker.data.model.viewModel.MainViewModel
 
 @Composable
-fun Account() {
+fun Account(mainViewModel: MainViewModel) {
     val prefs = PreferenceManager.getDefaultSharedPreferences(MainApplication.getContext())
     val initialUsername = prefs.getString("sleeperUsername", "") ?: ""
     val username = remember { mutableStateOf(TextFieldValue(initialUsername)) }
+
+    mainViewModel.title.value = "Account"
 
     Column {
         OutlinedTextField(

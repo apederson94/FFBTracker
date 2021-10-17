@@ -6,9 +6,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Done
+import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -17,11 +15,14 @@ import androidx.compose.ui.unit.dp
 import com.amped94.ffbtracker.data.model.viewModel.*
 
 @Composable
-fun NewCreateLeague(mainViewModel: MainViewModel) {
+fun CreateLeague(mainViewModel: MainViewModel) {
     val viewModel by remember { mutableStateOf(NewCreateLeagueViewModel()) }
+
     mainViewModel.onFABTapped.value = {
         viewModel.addPlayerFields.add(PlayerSelectionField())
     }
+
+    mainViewModel.title.value = "Create A League"
 
     LazyColumn(
         modifier = Modifier
@@ -77,31 +78,21 @@ fun NewCreateLeague(mainViewModel: MainViewModel) {
 
         item {
             Row(
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth()
+                horizontalArrangement = Arrangement.End,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp)
             ) {
-                Button(
-                    onClick = {
-                        viewModel.addPlayerFields.add(PlayerSelectionField())
-                    },
-                    modifier = Modifier.padding(vertical = 8.dp)
-                ) {
-                    Text("Add Player")
-                }
-                Button(
-                    onClick = {
-                        viewModel.saveLeague()
-                    }
-                ) {
+                Button(onClick = {
+                    viewModel.saveLeague()
+                }) {
                     Icon(
-                        imageVector = Icons.Filled.Done,
-                        contentDescription = ""
+                        imageVector = Icons.Filled.Check,
+                        contentDescription = "Save & Finish"
                     )
                     Text("Save & Finish")
                 }
             }
-
         }
     }
 }

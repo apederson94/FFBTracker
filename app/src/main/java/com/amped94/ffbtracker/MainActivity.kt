@@ -1,7 +1,6 @@
 package com.amped94.ffbtracker
 
 import android.os.Bundle
-import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.padding
@@ -46,7 +45,7 @@ class MainActivity : ComponentActivity() {
 
         Scaffold(
             topBar = {
-                TopAppBar(title = { Text("FFBTracker") })
+                TopAppBar(title = { Text(viewModel.title.value) })
             },
             bottomBar = {
                 BottomBar(navController = navController)
@@ -64,7 +63,7 @@ class MainActivity : ComponentActivity() {
         ) { innerPadding ->
             NavHost(navController = navController, startDestination = Screen.Players.route, modifier = Modifier.padding(innerPadding)) {
                 composable(Screen.Account.route) {
-                    Account()
+                    Account(viewModel)
                 }
                 composable(Screen.Players.route) {
                     PlayersList(viewModel)
@@ -80,14 +79,14 @@ class MainActivity : ComponentActivity() {
                         startDestination = Screen.Leagues.Add.Create.route,
                         route = Screen.Leagues.Add.route
                     ) {
-                        composable(Screen.Leagues.Add.LeagueSpecs.route) {
-                            LeagueSpecs(navController)
-                        }
-                        composable(Screen.Leagues.Add.AddPlayersToLeague.route) {
-                            AddPlayersToLeague(navController)
-                        }
+//                        composable(Screen.Leagues.Add.LeagueSpecs.route) {
+//                            LeagueSpecs(navController)
+//                        }
+//                        composable(Screen.Leagues.Add.AddPlayersToLeague.route) {
+//                            AddPlayersToLeague(navController)
+//                        }
                         composable(Screen.Leagues.Add.Create.route) {
-                            NewCreateLeague(viewModel)
+                            CreateLeague(viewModel)
                         }
                     }
 

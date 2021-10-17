@@ -17,6 +17,8 @@ import com.amped94.ffbtracker.data.model.viewModel.MainViewModel
 fun PlayersList(viewModel: MainViewModel) {
     val playersAndLeagues by viewModel.playersAndLeagues.observeAsState()
 
+    viewModel.title.value = "Players"
+
     playersAndLeagues?.let { data ->
         LazyColumn(modifier = Modifier.fillMaxSize()) {
             items(data.sortedBy { it.player.lastName }) { item ->

@@ -29,9 +29,6 @@ import com.amped94.ffbtracker.data.model.viewModel.MainViewModel
 
 @Composable
 fun Leagues(mainViewModel: MainViewModel, navController: NavController) {
-    //TODO: create a VM
-    //  VM will hold all the data for this screen
-    //  VM will add/create/delete/edit other typed leagues
     val viewModel by remember { mutableStateOf(LeaguesViewModel()) }
     val leaguesAndPlayers by viewModel.leaguesAndPlayers.observeAsState()
 
@@ -40,6 +37,8 @@ fun Leagues(mainViewModel: MainViewModel, navController: NavController) {
             restoreState = true
         }
     }
+
+    mainViewModel.title.value = "Leagues"
 
     LazyColumn(modifier = Modifier.fillMaxSize()) {
         leaguesAndPlayers?.let {
