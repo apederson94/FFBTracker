@@ -31,8 +31,8 @@ enum class Position(val title: String) {
     FLEX("FLEX"),
     K("K"),
     DST("DST"),
-    SuperFLEX("SuperFLEX"),
-    Bench("Bench");
+    SuperFLEX("SF"),
+    Bench("BN");
 
     fun isFLEX(): Boolean {
         return this == RB || this == WR || this == TE
@@ -42,17 +42,3 @@ enum class Position(val title: String) {
         return this == QB || isFLEX()
     }
 }
-
-//sealed class Position(val title: String) {
-//    object SuperFLEX : Position(title = "SuperFLEX") {
-//        object QB : Position(title = "QB")
-//        object FLEX : Position(title = "FLEX") {
-//            object RB : Position(title = "RB")
-//            object WR : Position(title = "WR")
-//            object TE : Position(title = "TE")
-//        }
-//    }
-//    object K : Position(title = "K")
-//    object DST : Position(title = "D/ST")
-//    object Bench : Position(title = "Bench")
-//}

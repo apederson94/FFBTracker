@@ -1,8 +1,7 @@
 package com.amped94.ffbtracker.ui.composable
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
@@ -13,6 +12,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.unit.dp
 import com.amped94.ffbtracker.data.model.viewModel.NewCreateLeagueViewModel
 import com.amped94.ffbtracker.data.model.viewModel.PlayerSelectionField
 import com.amped94.ffbtracker.data.model.viewModel.Position
@@ -34,20 +34,31 @@ fun NewCreateLeague() {
      * league name at the top of the screen
      */
 
-    LazyColumn {
+    LazyColumn(
+        modifier = Modifier.fillMaxWidth().padding(8.dp)
+    ) {
         item {
-            OutlinedTextField(value = leagueName, onValueChange = { leagueName = it }, label = {
-                Text("League Name")
-            })
+            OutlinedTextField(
+                value = leagueName,
+                onValueChange = { leagueName = it },
+                label = {
+                    Text("League Name")
+                },
+                modifier = Modifier.fillMaxWidth()
+            )
         }
 
         items(viewModel.selectedPlayers) { item ->
-            Row(verticalAlignment = Alignment.CenterVertically) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(item.position.title, modifier = Modifier.padding(end = 8.dp))
                 OutlinedTextField(
                     value = TextFieldValue("${item.player.firstName} ${item.player.lastName}"),
                     onValueChange = {},
                     label = {
-                            Text(item.position.title)
+                        Text("Player Name")
                     },
                     enabled = false,
                 )
@@ -59,7 +70,11 @@ fun NewCreateLeague() {
             items = viewModel.addPlayerFields,
             key = { it.id }
         ) { item ->
-            Row(verticalAlignment = Alignment.CenterVertically) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.fillMaxWidth()
+            ) {
                 PositionDropdownMenu {
                     item.position = it
                 }
@@ -103,9 +118,12 @@ fun NewCreateLeague() {
         }
 
         item {
-            Button(onClick = {
-                viewModel.addPlayerFields.add(PlayerSelectionField())
-            }) {
+            Button(
+                onClick = {
+                    viewModel.addPlayerFields.add(PlayerSelectionField())
+                },
+                modifier = Modifier.padding(vertical = 8.dp)
+            ) {
                 Text("Add Player")
             }
         }
