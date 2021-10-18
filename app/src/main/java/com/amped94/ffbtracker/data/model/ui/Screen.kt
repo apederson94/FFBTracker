@@ -30,24 +30,14 @@ sealed class Screen(val route: String, val img: ImageVector? = null, val title: 
             title = "Leagues"
         )
 
-        object Add : Screen(
-            route = "leagues/add"
-        ) {
-            object Create : Screen(
-                route = "leagues/add/create"
-            )
-
-            object LeagueSpecs : Screen(
-                route = "leagues/add/specs"
-            )
-
-            object AddPlayersToLeague : Screen(
-                route = "leagues/add/players"
-            )
-        }
+        object Create : Screen(
+            route = "leagues/create",
+            title = "Create New League"
+        )
 
         object Edit : Screen(
-            route = "leagues/edit"
+            route = "leagues/edit",
+            title = "Edit League"
         )
     }
 

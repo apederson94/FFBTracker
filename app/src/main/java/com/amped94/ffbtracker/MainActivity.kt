@@ -52,7 +52,7 @@ class MainActivity : ComponentActivity() {
             },
             floatingActionButton = {
                 if (currentBackstack?.screenIsShowing(Screen.Leagues.View) == true
-                    || currentBackstack?.screenIsShowing(Screen.Leagues.Add.Create) == true) {
+                    || currentBackstack?.screenIsShowing(Screen.Leagues.Create) == true) {
                     FloatingActionButton(onClick = {
                         viewModel.onFABTapped.value()
                     }) {
@@ -75,21 +75,9 @@ class MainActivity : ComponentActivity() {
                     composable(Screen.Leagues.View.route) {
                         Leagues(viewModel, navController)
                     }
-                    navigation(
-                        startDestination = Screen.Leagues.Add.Create.route,
-                        route = Screen.Leagues.Add.route
-                    ) {
-//                        composable(Screen.Leagues.Add.LeagueSpecs.route) {
-//                            LeagueSpecs(navController)
-//                        }
-//                        composable(Screen.Leagues.Add.AddPlayersToLeague.route) {
-//                            AddPlayersToLeague(navController)
-//                        }
-                        composable(Screen.Leagues.Add.Create.route) {
-                            CreateLeague(viewModel)
-                        }
+                    composable(Screen.Leagues.Create.route) {
+                        CreateLeague(viewModel)
                     }
-
                 }
             }
         }
