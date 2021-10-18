@@ -13,7 +13,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavType
 import androidx.navigation.compose.*
+import androidx.navigation.navArgument
 import com.amped94.ffbtracker.data.model.ui.Screen
 import com.amped94.ffbtracker.data.model.viewModel.MainViewModel
 import com.amped94.ffbtracker.ui.composable.*
@@ -52,7 +54,8 @@ class MainActivity : ComponentActivity() {
             },
             floatingActionButton = {
                 if (currentBackstack?.screenIsShowing(Screen.Leagues.View) == true
-                    || currentBackstack?.screenIsShowing(Screen.Leagues.Create) == true) {
+                    || currentBackstack?.screenIsShowing(Screen.Leagues.Create) == true
+                ) {
                     FloatingActionButton(onClick = {
                         viewModel.onFABTapped.value()
                     }) {
@@ -61,7 +64,11 @@ class MainActivity : ComponentActivity() {
                 }
             },
         ) { innerPadding ->
-            NavHost(navController = navController, startDestination = Screen.Players.route, modifier = Modifier.padding(innerPadding)) {
+            NavHost(
+                navController = navController,
+                startDestination = Screen.Players.route,
+                modifier = Modifier.padding(innerPadding)
+            ) {
                 composable(Screen.Account.route) {
                     Account(viewModel)
                 }
@@ -77,6 +84,15 @@ class MainActivity : ComponentActivity() {
                     }
                     composable(Screen.Leagues.Create.route) {
                         CreateLeague(viewModel)
+                    }
+                    composable(
+                        Screen.Leagues.Edit.route,
+                        arguments = listOf(
+                            navArgument("leagueId") { type = NavType.LongType }
+                        )
+                    ) {
+                        val leagueId = currentBackstack?.arguments?.getLong("leagueId") ?: 0
+                        EditLeague(mainViewModel = viewModel, leagueId = leagueId)
                     }
                 }
             }

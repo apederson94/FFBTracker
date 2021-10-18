@@ -10,9 +10,9 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import com.amped94.ffbtracker.data.model.db.entity.Player
 import com.amped94.ffbtracker.data.model.viewModel.*
 
 @Composable
@@ -20,7 +20,7 @@ fun CreateLeague(mainViewModel: MainViewModel) {
     val viewModel by remember { mutableStateOf(CreateLeagueViewModel()) }
 
     mainViewModel.onFABTapped.value = {
-        viewModel.addPlayerFields.add(PlayerSelectionField())
+        viewModel.addPlayerFields.add(PlayerSelectionFieldModel())
     }
 
     mainViewModel.title.value = "Create A League"
@@ -74,7 +74,7 @@ fun CreateLeague(mainViewModel: MainViewModel) {
             items = viewModel.addPlayerFields,
             key = { it.id }
         ) { item ->
-            SelectedPlayerRow(item = item, viewModel = viewModel)
+            PlayerSelectionRow(item = item, viewModel = viewModel)
         }
 
         item {
@@ -99,7 +99,7 @@ fun CreateLeague(mainViewModel: MainViewModel) {
 }
 
 @Composable
-fun SelectedPlayerRow(item: PlayerSelectionField, viewModel: CreateLeagueViewModel) {
+fun PlayerSelectionRow(item: PlayerSelectionFieldModel, viewModel: CreateLeagueViewModel) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -107,40 +107,25 @@ fun SelectedPlayerRow(item: PlayerSelectionField, viewModel: CreateLeagueViewMod
     ) {
         PositionDropdownMenu {
             item.position = it
+            item.textFieldValue.value = TextFieldValue()
+            item.suggestions.clear()
         }
-        Column {
-            OutlinedTextField(
-                value = item.textFieldValue.value,
-                onValueChange = {
-                    item.textFieldValue.value = it
-                    if (item.textFieldValue.value.text.length > 2) {
-                        viewModel.getSuggestions(item)
-                    } else {
-                        item.suggestions.clear()
-                    }
-                },
-                label = {
-                    Text("Player Name")
-                }
-            )
-            item.suggestions.forEach {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(
-                        "${it.firstName} ${it.lastName}",
-                        modifier = Modifier.clickable {
-                            viewModel.selectedPlayers.add(
-                                SelectedPlayer(
-                                    player = it,
-                                    position = item.position
-                                )
-                            )
-                            viewModel.addPlayerFields.remove(item)
-                        }.padding(8.dp)
+
+        PlayerSelectionField(
+            item = item,
+            getSuggestions = { viewModel.getSuggestions(it)  },
+            addSelectedPlayer = { item ->
+                item.player?.let {
+                    val newlySelectedPlayer = SelectedPlayer(
+                        player = it,
+                        position = item.position
                     )
-                    Text(it.team, color = MaterialTheme.colors.onSurface)
+                    viewModel.selectedPlayers.add(newlySelectedPlayer)
+                    viewModel.addPlayerFields.remove(item)
                 }
+
             }
-        }
+        )
 
         Icon(
             imageVector = Icons.Filled.Close,
@@ -149,6 +134,44 @@ fun SelectedPlayerRow(item: PlayerSelectionField, viewModel: CreateLeagueViewMod
                 viewModel.addPlayerFields.remove(item)
             }
         )
+    }
+}
+
+@Composable
+fun PlayerSelectionField(
+    item: PlayerSelectionFieldModel,
+    getSuggestions: (PlayerSelectionFieldModel) -> Unit,
+    addSelectedPlayer: (PlayerSelectionFieldModel) -> Unit
+) {
+    Column {
+        OutlinedTextField(
+            value = item.textFieldValue.value,
+            onValueChange = {
+                item.textFieldValue.value = it
+                if (item.textFieldValue.value.text.length > 2) {
+                    getSuggestions(item)
+                } else {
+                    item.suggestions.clear()
+                }
+            },
+            label = {
+                Text("Player Name")
+            }
+        )
+        item.suggestions.forEach {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    "${it.firstName} ${it.lastName}",
+                    modifier = Modifier
+                        .clickable {
+                            item.player = it
+                            addSelectedPlayer(item)
+                        }
+                        .padding(8.dp)
+                )
+                Text(it.team, color = MaterialTheme.colors.onSurface)
+            }
+        }
     }
 }
 

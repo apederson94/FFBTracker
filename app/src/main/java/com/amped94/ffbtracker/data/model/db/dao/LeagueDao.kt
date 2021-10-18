@@ -11,7 +11,7 @@ interface LeagueDao {
     suspend fun getAll(): List<League>
 
     @Query("SELECT * FROM League WHERE leagueId = :id")
-    suspend fun getLeague(id: Int): League
+    suspend fun getLeague(id: Long): League
 
     @Query("SELECT * FROM League WHERE leagueId IN (:ids)")
     suspend fun getLeagues(ids: List<Long>): List<League>
@@ -25,6 +25,10 @@ interface LeagueDao {
     @Transaction
     @Query("SELECT * FROM League")
     suspend fun getAllLeaguesAndPlayers(): List<LeagueAndPlayers>
+
+    @Transaction
+    @Query("SELECT * FROM League WHERE leagueId = :leagueId")
+    suspend fun getLeagueAndPlayers(leagueId: Long): LeagueAndPlayers
 
     @Query("SELECT * FROM League WHERE leagueId = (SELECT MAX(leagueId) FROM League)")
     suspend fun getLatestleague(): League?

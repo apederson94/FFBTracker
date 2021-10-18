@@ -45,9 +45,14 @@ fun Leagues(mainViewModel: MainViewModel, navController: NavController) {
         leaguesAndPlayers?.let {
             items(it) { data ->
                 Spacer(Modifier.height(4.dp))
-                LeagueCard(data, onEditClicked = {
-                    navController.navigate(Screen.Leagues.Edit.route)
-                } )
+                LeagueCard(data, onEditClicked = { league ->
+                    navController.navigate(
+                        Screen.Leagues.Edit.route.replace(
+                            "{leagueId}",
+                            "${league.leagueId}"
+                        )
+                    )
+                })
                 Spacer(Modifier.height(4.dp))
             }
         }
@@ -82,7 +87,7 @@ fun LeagueCard(data: LeagueAndPlayers, onEditClicked: (League) -> Unit) {
                     Row(modifier = Modifier.align(CenterVertically)) {
                         Icon(Icons.Default.Edit, "Edit League", modifier = Modifier
                             .clickable {
-
+                                onEditClicked(data.league)
                             }
                         )
                         Spacer(Modifier.width(8.dp))
@@ -94,7 +99,9 @@ fun LeagueCard(data: LeagueAndPlayers, onEditClicked: (League) -> Unit) {
                 data.players.sortedBy { it.lastName }.forEach { player ->
                     Text(
                         "${player.lastName}, ${player.firstName}",
-                        modifier = Modifier.fillMaxWidth().padding(horizontal = 32.dp, vertical = 4.dp)
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 32.dp, vertical = 4.dp)
                     )
                 }
             }

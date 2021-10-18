@@ -20,7 +20,7 @@ data class SelectedPlayer(
     val id: UUID = UUID.randomUUID()
 )
 
-data class PlayerSelectionField(
+data class PlayerSelectionFieldModel(
     var player: Player? = null,
     var position: Position = Position.QB,
     var textFieldValue: MutableState<TextFieldValue> = mutableStateOf(TextFieldValue()),
@@ -30,19 +30,19 @@ data class PlayerSelectionField(
 
 class CreateLeagueViewModel : ViewModel() {
     val selectedPlayers = mutableStateListOf<SelectedPlayer>()
-    val addPlayerFields = mutableStateListOf(PlayerSelectionField())
+    val addPlayerFields = mutableStateListOf(PlayerSelectionFieldModel())
     val leagueName = mutableStateOf(TextFieldValue(""))
 
-    fun getSuggestions(selectionField: PlayerSelectionField) {
+    fun getSuggestions(selectionFieldModel: PlayerSelectionFieldModel) {
         viewModelScope.launch {
             val suggestions = SleeperRepository.searchPlayersByPositionAndName(
-                selectionField.position,
-                selectionField.textFieldValue.value.text
+                selectionFieldModel.position,
+                selectionFieldModel.textFieldValue.value.text
             ).filter { player ->
                 selectedPlayers.none { it.player.playerId == player.playerId }
             }
-            selectionField.suggestions.clear()
-            selectionField.suggestions.addAll(suggestions)
+            selectionFieldModel.suggestions.clear()
+            selectionFieldModel.suggestions.addAll(suggestions)
         }
     }
 

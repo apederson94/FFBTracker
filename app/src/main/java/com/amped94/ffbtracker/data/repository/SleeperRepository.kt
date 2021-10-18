@@ -207,6 +207,10 @@ object SleeperRepository {
         return db.leagueDao().getLatestleague()!!
     }
 
+    suspend fun getLeague(leagueId: Long): League {
+        return db.leagueDao().getLeague(leagueId)
+    }
+
     suspend fun savePlayersToLeague(crossRefs: List<PlayerLeagueCrossRef>) {
         db.playerLeagueCrossRefDao().insert(*crossRefs.toTypedArray())
     }
@@ -222,5 +226,9 @@ object SleeperRepository {
             Position.DST -> db.playerDao().searchPlayersByPosition("DEF", searchText)
             else -> db.playerDao().searchPlayersByPosition(position.title, searchText)
         }
+    }
+
+    suspend fun getLeagueAndPlayers(leagueId: Long): LeagueAndPlayers {
+        return db.leagueDao().getLeagueAndPlayers(leagueId)
     }
 }

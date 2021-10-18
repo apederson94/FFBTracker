@@ -36,7 +36,7 @@ sealed class Screen(val route: String, val img: ImageVector? = null, val title: 
         )
 
         object Edit : Screen(
-            route = "leagues/edit",
+            route = "leagues/edit/{leagueId}",
             title = "Edit League"
         )
     }
