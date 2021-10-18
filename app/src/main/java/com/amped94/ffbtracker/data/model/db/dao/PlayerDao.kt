@@ -20,6 +20,9 @@ interface PlayerDao {
     @Query("SELECT * FROM Player WHERE firstName LIKE '%' || :searchText || '%' OR lastName LIKE '%' || :searchText || '%'")
     suspend fun searchPlayers(searchText: String): List<Player>
 
+    @Query("SELECT * FROM Player WHERE position in ('QB', 'RB', 'WR', 'TE', 'K', 'DST') AND (firstName LIKE '%' || :searchText || '%' OR lastName LIKE '%' || :searchText || '%')")
+    suspend fun searchCommonFantasyPlayers(searchText: String): List<Player>
+
     @Query("SELECT * FROM Player WHERE position = :position AND (firstName ||  ' ' || lastname) LIKE '%' || :searchText || '%'")
     suspend fun searchPlayersByPosition(position: String, searchText: String): List<Player>
 

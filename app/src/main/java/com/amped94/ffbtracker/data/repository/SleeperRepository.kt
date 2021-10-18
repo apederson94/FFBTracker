@@ -222,7 +222,7 @@ object SleeperRepository {
             db.playerDao()
                 .searchPlayersByPosition(searchPosition, searchText)
         } else {
-            db.playerDao().searchPlayers(searchText)
+            db.playerDao().searchCommonFantasyPlayers(searchText)
         }
     }
 }
