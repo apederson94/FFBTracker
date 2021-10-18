@@ -206,4 +206,8 @@ object SleeperRepository {
     suspend fun getLeagueAndPlayers(leagueId: Long): LeagueAndPlayers {
         return db.leagueDao().getLeagueAndPlayers(leagueId)
     }
+
+    suspend fun deleteLeague(league: League) {
+        db.leagueDao().delete(league)
+    }
 }

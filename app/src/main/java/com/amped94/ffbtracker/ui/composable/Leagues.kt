@@ -5,6 +5,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.AlertDialog
+import androidx.compose.material.Button
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -34,16 +37,52 @@ fun Leagues(mainViewModel: MainViewModel, navController: NavController) {
         leaguesAndPlayers?.let {
             items(it) { data ->
                 Spacer(Modifier.height(4.dp))
-                LeagueCard(data, onEditClicked = { league ->
-                    navController.navigate(
-                        Screen.Leagues.Edit.route.replace(
-                            "{leagueId}",
-                            "${league.leagueId}"
+                LeagueCard(
+                    data = data,
+                    editLeague = {
+                        navController.navigate(
+                            Screen.Leagues.Edit.route.replace(
+                                "{leagueId}",
+                                "${data.league.leagueId}"
+                            )
                         )
-                    )
-                })
+                    },
+                    deleteLeague = {
+                        viewModel.leagueToDelete.value = data.league
+                        viewModel.showDeleteAlert.value = true
+                    }
+                )
                 Spacer(Modifier.height(4.dp))
             }
         }
+    }
+
+    if (viewModel.showDeleteAlert.value) {
+        AlertDialog(
+            onDismissRequest = { viewModel.dismissDeleteAlert() },
+            title = { Text("Delete League?") },
+            text = {
+                val leagueName = viewModel.leagueToDelete.value?.name
+                Text("Are you sure you want to delete \"$leagueName\"?")
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        viewModel.deleteLeague()
+                    }
+                ) {
+                    Text("Delete")
+                }
+            },
+            dismissButton = {
+                Button(
+                    onClick = {
+                        viewModel.dismissDeleteAlert()
+                    }
+                ) {
+                    Text("Cancel")
+                }
+            }
+        )
     }
 }

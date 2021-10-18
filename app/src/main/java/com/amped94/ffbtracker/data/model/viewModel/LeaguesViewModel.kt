@@ -1,24 +1,51 @@
 package com.amped94.ffbtracker.data.model.viewModel
 
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.amped94.ffbtracker.data.model.db.entity.League
 import com.amped94.ffbtracker.data.model.db.entity.LeagueAndPlayers
 import com.amped94.ffbtracker.data.repository.SleeperRepository
 import kotlinx.coroutines.launch
 
 class LeaguesViewModel : ViewModel() {
-    val leagueName: MutableLiveData<String> = MutableLiveData("")
+    var showDeleteAlert = mutableStateOf(false)
+    var leagueToDelete = mutableStateOf<League?>(null)
 
     private val _leaguesAndPlayers: MutableLiveData<List<LeagueAndPlayers>> = MutableLiveData()
     val leaguesAndPlayers: LiveData<List<LeagueAndPlayers>> = _leaguesAndPlayers
 
     init {
+        getLeagues()
+    }
+
+    fun getLeagues() {
         viewModelScope.launch {
             val queriedResults = SleeperRepository.getLeaguesAndPlayers()
             _leaguesAndPlayers.postValue(queriedResults)
         }
+    }
+
+    fun deleteLeague() {
+        showDeleteAlert.value = false
+        leagueToDelete.value?.let {
+            viewModelScope.launch {
+                SleeperRepository.deleteLeague(it)
+                getLeagues()
+            }
+        }
+    }
+
+    fun showDeleteAlert(league: League) {
+        leagueToDelete.value = league
+        showDeleteAlert.value = true
+    }
+
+    fun dismissDeleteAlert() {
+        leagueToDelete.value = null
+        showDeleteAlert.value = false
     }
 }
 
