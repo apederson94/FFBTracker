@@ -215,14 +215,12 @@ object SleeperRepository {
         position: Position,
         searchText: String
     ): List<Player> {
-        return if (
-            position != Position.Bench && position != Position.SuperFLEX
-        ) {
-            val searchPosition = if (position == Position.DST) "DEF" else position.title
-            db.playerDao()
-                .searchPlayersByPosition(searchPosition, searchText)
-        } else {
-            db.playerDao().searchCommonFantasyPlayers(searchText)
+        return when (position) {
+            Position.Bench, Position.FLEX, Position.SuperFLEX -> {
+                db.playerDao().searchCommonFantasyPlayers(searchText)
+            }
+            Position.DST -> db.playerDao().searchPlayersByPosition("DEF", searchText)
+            else -> db.playerDao().searchPlayersByPosition(position.title, searchText)
         }
     }
 }
