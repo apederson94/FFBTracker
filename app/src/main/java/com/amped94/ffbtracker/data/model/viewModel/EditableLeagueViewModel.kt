@@ -28,10 +28,12 @@ data class PlayerSelectionFieldModel(
     var suggestions: SnapshotStateList<Player> = mutableStateListOf()
 )
 
-class CreateLeagueViewModel : ViewModel() {
+open class EditableLeagueViewModel : ViewModel() {
     val selectedPlayers = mutableStateListOf<SelectedPlayer>()
-    val addPlayerFields = mutableStateListOf(PlayerSelectionFieldModel())
+    val playerSelectionFieldModels = mutableStateListOf(PlayerSelectionFieldModel())
     val leagueName = mutableStateOf(TextFieldValue(""))
+    var onSaveFinished: () -> Unit = {}
+
 
     fun getSuggestions(selectionFieldModel: PlayerSelectionFieldModel) {
         viewModelScope.launch {
@@ -52,54 +54,31 @@ class CreateLeagueViewModel : ViewModel() {
                 player = it,
                 position = selectionFieldModel.position
             )
+            playerSelectionFieldModels.remove(selectionFieldModel)
             selectedPlayers.add(selectedPlayer)
         }
     }
 
-    fun saveLeague() {
-        var numQB = 0
-        var numRB = 0
-        var numWR = 0
-        var numTE = 0
-        var numFLEX = 0
-        var numK = 0
-        var numDST = 0
-        var numSuperFLEX = 0
-        var numBench = 0
-
-        selectedPlayers.forEach {
-            when (it.position) {
-                Position.QB -> numQB++
-                Position.RB -> numRB++
-                Position.WR -> numWR++
-                Position.TE -> numTE++
-                Position.FLEX -> numFLEX++
-                Position.K -> numK++
-                Position.DST -> numDST++
-                Position.SuperFLEX -> numSuperFLEX++
-                Position.Bench -> numBench++
-            }
-        }
-
+    open fun saveLeague() {
         val newLeague = League(
             leagueId = 0,
             externalLeagueId = "",
             associatedUserId = -1,
             name = leagueName.value.text,
-            type = FantasyProvider.Custom,
-            numQB =  numQB,
-            numRB = numRB,
-            numWR = numWR,
-            numTE = numTE,
-            numFLEX = numFLEX,
-            numK = numK,
-            numDST = numDST,
-            numSuperFLEX = numSuperFLEX,
-            numBench = numBench
+            type = FantasyProvider.Custom
         )
 
         viewModelScope.launch {
-            SleeperRepository.saveLeagueAndPlayers(newLeague, selectedPlayers.map{ it.player })
+            SleeperRepository.saveLeagueAndPlayers(newLeague, selectedPlayers.map { it.player })
+            onSaveFinished()
         }
+    }
+
+    fun removeSelectedPlayer(selectedPlayer: SelectedPlayer) {
+        selectedPlayers.remove(selectedPlayer)
+    }
+
+    fun removePlayerSelectionField(model: PlayerSelectionFieldModel) {
+        playerSelectionFieldModels.remove(model)
     }
 }

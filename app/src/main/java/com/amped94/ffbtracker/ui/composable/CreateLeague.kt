@@ -14,44 +14,32 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import com.amped94.ffbtracker.data.model.viewModel.*
+import androidx.navigation.NavController
+import com.amped94.ffbtracker.data.model.ui.Screen
+import com.amped94.ffbtracker.data.model.viewModel.EditableLeagueViewModel
+import com.amped94.ffbtracker.data.model.viewModel.MainViewModel
+import com.amped94.ffbtracker.data.model.viewModel.PlayerSelectionFieldModel
+import com.amped94.ffbtracker.data.model.viewModel.Position
 
 @Composable
-fun CreateLeague(mainViewModel: MainViewModel) {
-    val viewModel by remember { mutableStateOf(CreateLeagueViewModel()) }
+fun CreateLeague(mainViewModel: MainViewModel, navController: NavController) {
+    val viewModel by remember { mutableStateOf(EditableLeagueViewModel()) }
 
     mainViewModel.onFABTapped.value = {
-        viewModel.addPlayerFields.add(PlayerSelectionFieldModel())
+        viewModel.playerSelectionFieldModels.add(PlayerSelectionFieldModel())
     }
 
     mainViewModel.title.value = "Create A League"
 
-    EditableLeague(
-        leagueName = viewModel.leagueName,
-        selectedPlayers = viewModel.selectedPlayers,
-        removeSelectedPlayer = { viewModel.selectedPlayers.remove(it) },
-        playerSelectionFieldModels = viewModel.addPlayerFields,
-        getSuggestions = { viewModel.getSuggestions(it) },
-        addSelectedPlayer = {
-            viewModel.addNewlySelectedPlayer(it)
-            viewModel.addPlayerFields.remove(it)
-        },
-        removePlayerSelectionField = { viewModel.addPlayerFields.remove(it) },
-        saveLeague = { viewModel.saveLeague() }
-    )
+    viewModel.onSaveFinished = {
+        navController.navigate(Screen.Leagues.route)
+    }
+
+    EditableLeague(viewModel)
 }
 
 @Composable
-fun EditableLeague(
-    leagueName: MutableState<TextFieldValue>,
-    selectedPlayers: List<SelectedPlayer>,
-    removeSelectedPlayer: (SelectedPlayer) -> Unit,
-    playerSelectionFieldModels: List<PlayerSelectionFieldModel>,
-    getSuggestions: (PlayerSelectionFieldModel) -> Unit,
-    addSelectedPlayer: (PlayerSelectionFieldModel) -> Unit,
-    removePlayerSelectionField: (PlayerSelectionFieldModel) -> Unit,
-    saveLeague: () -> Unit
-) {
+fun EditableLeague(viewModel: EditableLeagueViewModel) {
     LazyColumn(
         modifier = Modifier
             .fillMaxWidth()
@@ -59,8 +47,8 @@ fun EditableLeague(
     ) {
         item {
             OutlinedTextField(
-                value = leagueName.value,
-                onValueChange = { leagueName.value = it },
+                value = viewModel.leagueName.value,
+                onValueChange = { viewModel.leagueName.value = it },
                 label = {
                     Text("League Name")
                 },
@@ -69,7 +57,7 @@ fun EditableLeague(
         }
 
         items(
-            items = selectedPlayers,
+            items = viewModel.selectedPlayers,
             key = { it.id }
         ) { item ->
             Row(
@@ -90,7 +78,7 @@ fun EditableLeague(
                     imageVector = Icons.Filled.Close,
                     contentDescription = "",
                     modifier = Modifier.clickable {
-                        removeSelectedPlayer(item)
+                        viewModel.removeSelectedPlayer(item)
                     }
                 )
             }
@@ -98,14 +86,14 @@ fun EditableLeague(
 
 
         items(
-            items = playerSelectionFieldModels,
+            items = viewModel.playerSelectionFieldModels,
             key = { it.id }
         ) { item ->
             PlayerSelectionRow(
                 item = item,
-                getSuggestions = { getSuggestions(item) },
-                addSelectedPlayer = { addSelectedPlayer(item) },
-                removeRow = { removePlayerSelectionField(item) }
+                getSuggestions = { viewModel.getSuggestions(item) },
+                addSelectedPlayer = { viewModel.addNewlySelectedPlayer(item) },
+                removeRow = { viewModel.removePlayerSelectionField(item) }
             )
         }
 
@@ -117,7 +105,7 @@ fun EditableLeague(
                     .padding(vertical = 8.dp)
             ) {
                 Button(onClick = {
-                    saveLeague()
+                    viewModel.saveLeague()
                 }, modifier = Modifier.padding(vertical = 16.dp)) {
                     Icon(
                         imageVector = Icons.Filled.Check,

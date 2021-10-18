@@ -85,29 +85,6 @@ object SleeperRepository {
             val leaguesToInsert = mutableListOf<League>()
 
             leaguesResponse.forEach { league ->
-                var numQB = 0
-                var numRB = 0
-                var numWR = 0
-                var numTE = 0
-                var numFLEX = 0
-                var numK = 0
-                var numDST = 0
-                var numSuperFLEX = 0
-                var numBench = 0
-
-                league.rosterPositions.forEach {
-                    when (it) {
-                        "QB" -> numQB++
-                        "RB" -> numRB++
-                        "WR" -> numWR++
-                        "TE" -> numTE++
-                        "FLEX" -> numFLEX++
-                        "K" -> numK++
-                        "DEF" -> numDST++
-                        "SUPER_FLEX" -> numSuperFLEX++
-                        "BN" -> numBench++
-                    }
-                }
 
                 leaguesToInsert.add(
                     League(
@@ -115,16 +92,7 @@ object SleeperRepository {
                         externalLeagueId = league.leagueId,
                         associatedUserId = user.userId,
                         name = league.name,
-                        type = FantasyProvider.Sleeper,
-                        numQB = numQB,
-                        numRB = numRB,
-                        numWR = numWR,
-                        numTE = numTE,
-                        numFLEX = numFLEX,
-                        numK = numK,
-                        numDST = numDST,
-                        numSuperFLEX = numSuperFLEX,
-                        numBench = numBench
+                        type = FantasyProvider.Sleeper
                     )
                 )
             }
@@ -220,12 +188,19 @@ object SleeperRepository {
         searchText: String
     ): List<Player> {
         return when (position) {
-            Position.Bench, Position.FLEX, Position.SuperFLEX -> {
-                db.playerDao().searchCommonFantasyPlayers(searchText)
-            }
             Position.DST -> db.playerDao().searchPlayersByPosition("DEF", searchText)
             else -> db.playerDao().searchPlayersByPosition(position.title, searchText)
         }
+    }
+
+    suspend fun updateLeague(league: League) {
+        db.leagueDao().updateLeague(league)
+    }
+
+    suspend fun updatePlayerLeagueCrossRefs(leagueId: Long, newCrossRefs: List<PlayerLeagueCrossRef>) {
+        val currentCrossRefs = db.playerLeagueCrossRefDao().getEntriesForLeagues(listOf(leagueId))
+        db.playerLeagueCrossRefDao().delete(*currentCrossRefs.toTypedArray())
+        db.playerLeagueCrossRefDao().insert(*newCrossRefs.toTypedArray())
     }
 
     suspend fun getLeagueAndPlayers(leagueId: Long): LeagueAndPlayers {

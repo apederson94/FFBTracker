@@ -5,7 +5,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.amped94.ffbtracker.data.model.db.entity.LeagueAndPlayers
-import com.amped94.ffbtracker.data.model.db.entity.Player
 import com.amped94.ffbtracker.data.repository.SleeperRepository
 import kotlinx.coroutines.launch
 
@@ -28,11 +27,8 @@ enum class Position(val title: String) {
     RB("RB"),
     WR("WR"),
     TE("TE"),
-    FLEX("FLEX"),
     K("K"),
-    DST("DST"),
-    SuperFLEX("SF"),
-    Bench("BN");
+    DST("DST");
 
     fun isFLEX(): Boolean {
         return this == RB || this == WR || this == TE
@@ -40,5 +36,19 @@ enum class Position(val title: String) {
 
     fun isSuperFLEX(): Boolean {
         return this == QB || isFLEX()
+    }
+
+    companion object {
+        fun getFromString(value: String): Position {
+            return when (value) {
+                "QB" -> QB
+                "RB" -> RB
+                "WR" -> WR
+                "TE" -> TE
+                "K" -> K
+                "DEF" -> DST
+                else -> throw Error("$value does not map to a position in Position enum")
+            }
+        }
     }
 }

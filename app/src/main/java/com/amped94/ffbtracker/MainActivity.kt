@@ -83,7 +83,7 @@ class MainActivity : ComponentActivity() {
                         Leagues(viewModel, navController)
                     }
                     composable(Screen.Leagues.Create.route) {
-                        CreateLeague(viewModel)
+                        CreateLeague(viewModel, navController)
                     }
                     composable(
                         Screen.Leagues.Edit.route,
@@ -92,7 +92,11 @@ class MainActivity : ComponentActivity() {
                         )
                     ) {
                         val leagueId = currentBackstack?.arguments?.getLong("leagueId") ?: 0
-                        EditLeague(mainViewModel = viewModel, leagueId = leagueId)
+                        EditLeague(
+                            mainViewModel = viewModel,
+                            leagueId = leagueId,
+                            navController = navController
+                        )
                     }
                 }
             }
