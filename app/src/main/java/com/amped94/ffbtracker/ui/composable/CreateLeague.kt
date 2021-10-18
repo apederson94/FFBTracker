@@ -37,7 +37,6 @@ fun CreateLeague(mainViewModel: MainViewModel, navController: NavController) {
 
     EditableLeague(viewModel)
 }
-}
 
 @Composable
 fun EditableLeague(viewModel: EditableLeagueViewModel) {
