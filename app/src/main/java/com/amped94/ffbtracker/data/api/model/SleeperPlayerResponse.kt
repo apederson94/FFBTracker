@@ -108,7 +108,6 @@ data class SleeperPlayer(
     @SerialName("search_full_name")
     val searchFullName: String? = null,
 
-
     @SerialName("player_id")
     val playerID: String
 )

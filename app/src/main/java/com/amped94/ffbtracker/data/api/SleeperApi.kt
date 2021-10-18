@@ -42,12 +42,6 @@ object SleeperApi {
         }
     }
 
-    suspend fun getLeagueParticipants(league: SleeperLeagueResponse): List<SleeperLeagueParticipant> {
-        return getClient().use {
-            it.get("https://api.sleeper.app/v1/league/${league.leagueId}/rosters")
-        }
-    }
-
     suspend fun getLeagueParticipants(league: League): List<SleeperLeagueParticipant> {
         return getClient().use {
             it.get("https://api.sleeper.app/v1/league/${league.externalLeagueId}/rosters")

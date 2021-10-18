@@ -3,10 +3,13 @@ package com.amped94.ffbtracker.data.repository
 import androidx.preference.PreferenceManager
 import com.amped94.ffbtracker.MainApplication
 import com.amped94.ffbtracker.data.api.SleeperApi
+import com.amped94.ffbtracker.data.api.model.SleeperLeagueParticipant
 import com.amped94.ffbtracker.data.model.db.AppDatabase
 import com.amped94.ffbtracker.data.model.db.FantasyProvider
 import com.amped94.ffbtracker.data.model.db.entity.*
 import com.amped94.ffbtracker.data.model.viewModel.Position
+import kotlinx.coroutines.*
+import java.lang.Exception
 import java.util.*
 
 object SleeperRepository {
@@ -17,6 +20,9 @@ object SleeperRepository {
         val sleeperLeagues = db.leagueDao().getLeaguesForUsers(sleeperUsers.map { it.userId })
         val playersForLeagues =
             db.playerLeagueCrossRefDao().getEntriesForLeagues(sleeperLeagues.map { it.leagueId })
+
+        db.userDao().delete(*sleeperUsers.toTypedArray())
+        db.leagueDao().delete(*sleeperLeagues.toTypedArray())
         db.playerLeagueCrossRefDao().delete(*playersForLeagues.toTypedArray())
 
         return getPlayersAndLeagues()
@@ -24,8 +30,13 @@ object SleeperRepository {
 
     suspend fun getPlayersAndLeagues(): List<PlayerAndLeagues> {
         val queriedResults = db.playerDao().getPlayersAndLeagues()
+        val sleeperLeaguesLoaded = queriedResults.any {
+            it.leagues.any { league ->
+                league.type == FantasyProvider.Sleeper
+            }
+        }
 
-        return if (queriedResults.isNotEmpty()) queriedResults else {
+        return if (sleeperLeaguesLoaded) queriedResults else {
             val queriedUsers = db.userDao().getAll()
             val prefs = PreferenceManager.getDefaultSharedPreferences(MainApplication.getContext())
 
@@ -49,31 +60,46 @@ object SleeperRepository {
 
         return if (queriedPlayersInLeagues.isNotEmpty()) queriedPlayersInLeagues else {
             val allPlayers = getAllPlayers()
-            val crossRefs = mutableListOf<PlayerLeagueCrossRef>()
+            val participantApiCalls = mutableListOf<LeagueAndParticipantCall>()
+            val playerAndLeagues = mutableListOf<PlayerAndLeagues>()
 
-            leagues.forEach { league ->
-                SleeperApi.getLeagueParticipants(league)
-                    .firstOrNull { participant ->
-                        val user = db.userDao().getUser(league.associatedUserId)
-                        participant.ownerId == user?.accountId
-                    }?.let { participant ->
-                        participant.players.forEach { sleeperPlayerId ->
-                            val playerId = allPlayers.first { roomPlayer ->
-                                roomPlayer.externalPlayerId == sleeperPlayerId
-                            }.playerId
-                            crossRefs.add(
+            coroutineScope {
+                leagues.forEach { league ->
+                    val user = db.userDao().getUser(league.associatedUserId)
+                    val sleeperLeagueParticipant = async {
+                        Pair(league, SleeperApi.getLeagueParticipants(league).firstOrNull {
+                            it.ownerId == user?.accountId
+                        })
+                    }
+                    participantApiCalls.add(sleeperLeagueParticipant)
+                }
+                try {
+                    val allParticipants = participantApiCalls.map { it.await() }
+                    allParticipants.map {
+                        val crossRefs = it.second?.let { participant ->
+                            val playersInLeague = participant.players.map { playerId ->
+                                allPlayers.first { roomPlayer ->
+                                    roomPlayer.externalPlayerId == playerId
+                                }
+                            }
+                            playersInLeague.map { player ->
                                 PlayerLeagueCrossRef(
-                                    playerId = playerId,
-                                    leagueId = league.leagueId
+                                    playerId = player.playerId,
+                                    it.first.leagueId
                                 )
-                            )
+                            }
+                        }
+
+                        crossRefs?.let { allRefs ->
+                            db.playerLeagueCrossRefDao().insert(*allRefs.toTypedArray())
+                            playerAndLeagues.addAll(db.playerDao().getPlayersInLeagues(leagueIds))
                         }
                     }
+                } catch (exception: Exception) {
+                    print(exception)
+                }
+                playerAndLeagues
             }
-
-            db.playerLeagueCrossRefDao().insert(*crossRefs.toTypedArray())
-
-            db.playerDao().getPlayersInLeagues(leagueIds)
         }
     }
 
@@ -215,3 +241,5 @@ object SleeperRepository {
         db.playerLeagueCrossRefDao().cleanUpEntries()
     }
 }
+
+typealias LeagueAndParticipantCall = Deferred<Pair<League, SleeperLeagueParticipant?>>
