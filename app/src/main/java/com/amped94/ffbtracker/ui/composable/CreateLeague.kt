@@ -6,13 +6,14 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import com.amped94.ffbtracker.data.model.db.entity.Player
 import com.amped94.ffbtracker.data.model.viewModel.*
 
 @Composable
@@ -25,6 +26,32 @@ fun CreateLeague(mainViewModel: MainViewModel) {
 
     mainViewModel.title.value = "Create A League"
 
+    EditableLeague(
+        leagueName = viewModel.leagueName,
+        selectedPlayers = viewModel.selectedPlayers,
+        removeSelectedPlayer = { viewModel.selectedPlayers.remove(it) },
+        playerSelectionFieldModels = viewModel.addPlayerFields,
+        getSuggestions = { viewModel.getSuggestions(it) },
+        addSelectedPlayer = {
+            viewModel.addNewlySelectedPlayer(it)
+            viewModel.addPlayerFields.remove(it)
+        },
+        removePlayerSelectionField = { viewModel.addPlayerFields.remove(it) },
+        saveLeague = { viewModel.saveLeague() }
+    )
+}
+
+@Composable
+fun EditableLeague(
+    leagueName: MutableState<TextFieldValue>,
+    selectedPlayers: List<SelectedPlayer>,
+    removeSelectedPlayer: (SelectedPlayer) -> Unit,
+    playerSelectionFieldModels: List<PlayerSelectionFieldModel>,
+    getSuggestions: (PlayerSelectionFieldModel) -> Unit,
+    addSelectedPlayer: (PlayerSelectionFieldModel) -> Unit,
+    removePlayerSelectionField: (PlayerSelectionFieldModel) -> Unit,
+    saveLeague: () -> Unit
+) {
     LazyColumn(
         modifier = Modifier
             .fillMaxWidth()
@@ -32,8 +59,8 @@ fun CreateLeague(mainViewModel: MainViewModel) {
     ) {
         item {
             OutlinedTextField(
-                value = viewModel.leagueName.value,
-                onValueChange = { viewModel.leagueName.value = it },
+                value = leagueName.value,
+                onValueChange = { leagueName.value = it },
                 label = {
                     Text("League Name")
                 },
@@ -42,7 +69,7 @@ fun CreateLeague(mainViewModel: MainViewModel) {
         }
 
         items(
-            items = viewModel.selectedPlayers,
+            items = selectedPlayers,
             key = { it.id }
         ) { item ->
             Row(
@@ -63,7 +90,7 @@ fun CreateLeague(mainViewModel: MainViewModel) {
                     imageVector = Icons.Filled.Close,
                     contentDescription = "",
                     modifier = Modifier.clickable {
-                        viewModel.selectedPlayers.remove(item)
+                        removeSelectedPlayer(item)
                     }
                 )
             }
@@ -71,10 +98,15 @@ fun CreateLeague(mainViewModel: MainViewModel) {
 
 
         items(
-            items = viewModel.addPlayerFields,
+            items = playerSelectionFieldModels,
             key = { it.id }
         ) { item ->
-            PlayerSelectionRow(item = item, viewModel = viewModel)
+            PlayerSelectionRow(
+                item = item,
+                getSuggestions = { getSuggestions(item) },
+                addSelectedPlayer = { addSelectedPlayer(item) },
+                removeRow = { removePlayerSelectionField(item) }
+            )
         }
 
         item {
@@ -85,7 +117,7 @@ fun CreateLeague(mainViewModel: MainViewModel) {
                     .padding(vertical = 8.dp)
             ) {
                 Button(onClick = {
-                    viewModel.saveLeague()
+                    saveLeague()
                 }, modifier = Modifier.padding(vertical = 16.dp)) {
                     Icon(
                         imageVector = Icons.Filled.Check,
@@ -99,7 +131,12 @@ fun CreateLeague(mainViewModel: MainViewModel) {
 }
 
 @Composable
-fun PlayerSelectionRow(item: PlayerSelectionFieldModel, viewModel: CreateLeagueViewModel) {
+fun PlayerSelectionRow(
+    item: PlayerSelectionFieldModel,
+    getSuggestions: () -> Unit,
+    addSelectedPlayer: () -> Unit,
+    removeRow: () -> Unit
+) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -113,25 +150,15 @@ fun PlayerSelectionRow(item: PlayerSelectionFieldModel, viewModel: CreateLeagueV
 
         PlayerSelectionField(
             item = item,
-            getSuggestions = { viewModel.getSuggestions(it)  },
-            addSelectedPlayer = { item ->
-                item.player?.let {
-                    val newlySelectedPlayer = SelectedPlayer(
-                        player = it,
-                        position = item.position
-                    )
-                    viewModel.selectedPlayers.add(newlySelectedPlayer)
-                    viewModel.addPlayerFields.remove(item)
-                }
-
-            }
+            getSuggestions = getSuggestions,
+            addSelectedPlayer = addSelectedPlayer
         )
 
         Icon(
             imageVector = Icons.Filled.Close,
             contentDescription = "",
             modifier = Modifier.clickable {
-                viewModel.addPlayerFields.remove(item)
+                removeRow()
             }
         )
     }
@@ -140,8 +167,8 @@ fun PlayerSelectionRow(item: PlayerSelectionFieldModel, viewModel: CreateLeagueV
 @Composable
 fun PlayerSelectionField(
     item: PlayerSelectionFieldModel,
-    getSuggestions: (PlayerSelectionFieldModel) -> Unit,
-    addSelectedPlayer: (PlayerSelectionFieldModel) -> Unit
+    getSuggestions: () -> Unit,
+    addSelectedPlayer: () -> Unit
 ) {
     Column {
         OutlinedTextField(
@@ -149,7 +176,7 @@ fun PlayerSelectionField(
             onValueChange = {
                 item.textFieldValue.value = it
                 if (item.textFieldValue.value.text.length > 2) {
-                    getSuggestions(item)
+                    getSuggestions()
                 } else {
                     item.suggestions.clear()
                 }
@@ -165,7 +192,7 @@ fun PlayerSelectionField(
                     modifier = Modifier
                         .clickable {
                             item.player = it
-                            addSelectedPlayer(item)
+                            addSelectedPlayer()
                         }
                         .padding(8.dp)
                 )

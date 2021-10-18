@@ -46,6 +46,16 @@ class CreateLeagueViewModel : ViewModel() {
         }
     }
 
+    fun addNewlySelectedPlayer(selectionFieldModel: PlayerSelectionFieldModel) {
+        selectionFieldModel.player?.let {
+            val selectedPlayer = SelectedPlayer(
+                player = it,
+                position = selectionFieldModel.position
+            )
+            selectedPlayers.add(selectedPlayer)
+        }
+    }
+
     fun saveLeague() {
         var numQB = 0
         var numRB = 0
