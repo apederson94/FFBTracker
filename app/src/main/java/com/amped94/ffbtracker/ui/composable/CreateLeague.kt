@@ -86,7 +86,7 @@ fun CreateLeague(mainViewModel: MainViewModel) {
             ) {
                 Button(onClick = {
                     viewModel.saveLeague()
-                }) {
+                }, modifier = Modifier.padding(vertical = 16.dp)) {
                     Icon(
                         imageVector = Icons.Filled.Check,
                         contentDescription = "Save & Finish"
@@ -135,7 +135,7 @@ fun SelectedPlayerRow(item: PlayerSelectionField, viewModel: CreateLeagueViewMod
                                 )
                             )
                             viewModel.addPlayerFields.remove(item)
-                        }.padding(4.dp)
+                        }.padding(8.dp)
                     )
                     Text(it.team, color = MaterialTheme.colors.onSurface)
                 }
