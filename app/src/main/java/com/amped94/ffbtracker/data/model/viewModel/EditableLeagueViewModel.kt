@@ -81,4 +81,8 @@ open class EditableLeagueViewModel : ViewModel() {
     fun removePlayerSelectionField(model: PlayerSelectionFieldModel) {
         playerSelectionFieldModels.remove(model)
     }
+
+    fun onFABTapped() {
+        playerSelectionFieldModels.add(PlayerSelectionFieldModel())
+    }
 }

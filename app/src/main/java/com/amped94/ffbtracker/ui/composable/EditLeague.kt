@@ -15,6 +15,10 @@ fun EditLeague(mainViewModel: MainViewModel, leagueId: Long, navController: NavC
 
     mainViewModel.title.value = "Edit League"
 
+    mainViewModel.onFABTapped.value = {
+        viewModel.onFABTapped()
+    }
+
     viewModel.onSaveFinished = {
         navController.navigate(Screen.Leagues.route)
     }

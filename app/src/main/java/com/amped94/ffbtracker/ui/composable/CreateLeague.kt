@@ -26,7 +26,7 @@ fun CreateLeague(mainViewModel: MainViewModel, navController: NavController) {
     val viewModel by remember { mutableStateOf(EditableLeagueViewModel()) }
 
     mainViewModel.onFABTapped.value = {
-        viewModel.playerSelectionFieldModels.add(PlayerSelectionFieldModel())
+        viewModel.onFABTapped()
     }
 
     mainViewModel.title.value = "Create A League"
@@ -36,6 +36,7 @@ fun CreateLeague(mainViewModel: MainViewModel, navController: NavController) {
     }
 
     EditableLeague(viewModel)
+}
 }
 
 @Composable

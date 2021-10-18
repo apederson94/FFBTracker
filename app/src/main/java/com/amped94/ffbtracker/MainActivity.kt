@@ -55,6 +55,7 @@ class MainActivity : ComponentActivity() {
             floatingActionButton = {
                 if (currentBackstack?.screenIsShowing(Screen.Leagues.View) == true
                     || currentBackstack?.screenIsShowing(Screen.Leagues.Create) == true
+                    || currentBackstack?.screenIsShowing(Screen.Leagues.Edit) == true
                 ) {
                     FloatingActionButton(onClick = {
                         viewModel.onFABTapped.value()
