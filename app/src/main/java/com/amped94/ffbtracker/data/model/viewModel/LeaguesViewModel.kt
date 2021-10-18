@@ -11,7 +11,7 @@ import com.amped94.ffbtracker.data.repository.SleeperRepository
 import kotlinx.coroutines.launch
 
 class LeaguesViewModel : ViewModel() {
-    var showDeleteAlert = mutableStateOf(false)
+    var isDeleteAlertShowing = mutableStateOf(false)
     var leagueToDelete = mutableStateOf<League?>(null)
 
     private val _leaguesAndPlayers: MutableLiveData<List<LeagueAndPlayers>> = MutableLiveData()
@@ -29,7 +29,7 @@ class LeaguesViewModel : ViewModel() {
     }
 
     fun deleteLeague() {
-        showDeleteAlert.value = false
+        isDeleteAlertShowing.value = false
         leagueToDelete.value?.let {
             viewModelScope.launch {
                 SleeperRepository.deleteLeague(it)
@@ -40,12 +40,12 @@ class LeaguesViewModel : ViewModel() {
 
     fun showDeleteAlert(league: League) {
         leagueToDelete.value = league
-        showDeleteAlert.value = true
+        isDeleteAlertShowing.value = true
     }
 
     fun dismissDeleteAlert() {
         leagueToDelete.value = null
-        showDeleteAlert.value = false
+        isDeleteAlertShowing.value = false
     }
 }
 

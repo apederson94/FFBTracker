@@ -197,7 +197,10 @@ object SleeperRepository {
         db.leagueDao().updateLeague(league)
     }
 
-    suspend fun updatePlayerLeagueCrossRefs(leagueId: Long, newCrossRefs: List<PlayerLeagueCrossRef>) {
+    suspend fun updatePlayerLeagueCrossRefs(
+        leagueId: Long,
+        newCrossRefs: List<PlayerLeagueCrossRef>
+    ) {
         val currentCrossRefs = db.playerLeagueCrossRefDao().getEntriesForLeagues(listOf(leagueId))
         db.playerLeagueCrossRefDao().delete(*currentCrossRefs.toTypedArray())
         db.playerLeagueCrossRefDao().insert(*newCrossRefs.toTypedArray())
@@ -209,5 +212,6 @@ object SleeperRepository {
 
     suspend fun deleteLeague(league: League) {
         db.leagueDao().delete(league)
+        db.playerLeagueCrossRefDao().cleanUpEntries()
     }
 }

@@ -14,6 +14,9 @@ interface PlayerLeagueCrossRefDao {
     @Query("SELECT * FROM PlayerLeagueCrossRef WHERE leagueId in (:leagueIds)")
     suspend fun getEntriesForLeagues(leagueIds: List<Long>): List<PlayerLeagueCrossRef>
 
+    @Query("DELETE FROM PlayerLeagueCrossRef WHERE leagueId NOT IN (SELECT leagueId FROM League)")
+    suspend fun cleanUpEntries()
+
     @Insert
     suspend fun insert(vararg crossRef: PlayerLeagueCrossRef): List<Long>
 

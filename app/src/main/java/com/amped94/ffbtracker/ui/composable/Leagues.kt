@@ -48,8 +48,7 @@ fun Leagues(mainViewModel: MainViewModel, navController: NavController) {
                         )
                     },
                     deleteLeague = {
-                        viewModel.leagueToDelete.value = data.league
-                        viewModel.showDeleteAlert.value = true
+                        viewModel.showDeleteAlert(data.league)
                     }
                 )
                 Spacer(Modifier.height(4.dp))
@@ -57,32 +56,11 @@ fun Leagues(mainViewModel: MainViewModel, navController: NavController) {
         }
     }
 
-    if (viewModel.showDeleteAlert.value) {
-        AlertDialog(
-            onDismissRequest = { viewModel.dismissDeleteAlert() },
-            title = { Text("Delete League?") },
-            text = {
-                val leagueName = viewModel.leagueToDelete.value?.name
-                Text("Are you sure you want to delete \"$leagueName\"?")
-            },
-            confirmButton = {
-                Button(
-                    onClick = {
-                        viewModel.deleteLeague()
-                    }
-                ) {
-                    Text("Delete")
-                }
-            },
-            dismissButton = {
-                Button(
-                    onClick = {
-                        viewModel.dismissDeleteAlert()
-                    }
-                ) {
-                    Text("Cancel")
-                }
-            }
+    if (viewModel.isDeleteAlertShowing.value) {
+        DeleteLeagueAlert(
+            leagueToDelete = viewModel.leagueToDelete.value,
+            dismissAlert = { viewModel.dismissDeleteAlert() },
+            confirmDelete = { viewModel.deleteLeague() }
         )
     }
 }
