@@ -27,8 +27,9 @@ fun PlayerSelectionRow(
     ) {
         PositionDropdownMenu {
             item.position = it
-            item.textFieldValue.value = TextFieldValue()
-            item.suggestions.clear()
+            if (item.textFieldValue.value.text.length > 2) {
+                getSuggestions()
+            }
         }
 
         PlayerSelectionField(
