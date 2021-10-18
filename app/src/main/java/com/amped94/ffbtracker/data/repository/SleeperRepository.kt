@@ -173,7 +173,7 @@ object SleeperRepository {
                     lastName = it.value.lastName,
                     age = it.value.age ?: 0,
                     number = it.value.number ?: 0,
-                    team = it.value.team ?: "NO TEAM",
+                    team = it.value.team ?: "FA",
                     position = it.value.position ?: ""
                 )
             }

@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.amped94.ffbtracker.data.model.db.FantasyProvider
+import com.amped94.ffbtracker.data.model.db.entity.League
 import com.amped94.ffbtracker.data.model.db.entity.LeagueAndPlayers
 import com.amped94.ffbtracker.data.model.ui.Screen
 import com.amped94.ffbtracker.data.model.viewModel.LeaguesViewModel
@@ -33,7 +34,7 @@ fun Leagues(mainViewModel: MainViewModel, navController: NavController) {
     val leaguesAndPlayers by viewModel.leaguesAndPlayers.observeAsState()
 
     mainViewModel.onFABTapped.value = {
-        navController.navigate(Screen.Leagues.Add.route) {
+        navController.navigate(Screen.Leagues.Create.route) {
             restoreState = true
         }
     }
@@ -44,7 +45,9 @@ fun Leagues(mainViewModel: MainViewModel, navController: NavController) {
         leaguesAndPlayers?.let {
             items(it) { data ->
                 Spacer(Modifier.height(4.dp))
-                LeagueCard(data)
+                LeagueCard(data, onEditClicked = {
+                    navController.navigate(Screen.Leagues.Edit.route)
+                } )
                 Spacer(Modifier.height(4.dp))
             }
         }
@@ -52,7 +55,7 @@ fun Leagues(mainViewModel: MainViewModel, navController: NavController) {
 }
 
 @Composable
-fun LeagueCard(data: LeagueAndPlayers) {
+fun LeagueCard(data: LeagueAndPlayers, onEditClicked: (League) -> Unit) {
     val isCollapsed = remember { mutableStateOf(true) }
 
     Card(

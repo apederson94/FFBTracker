@@ -10,13 +10,14 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.amped94.ffbtracker.data.model.viewModel.*
 
 @Composable
 fun CreateLeague(mainViewModel: MainViewModel) {
-    val viewModel by remember { mutableStateOf(NewCreateLeagueViewModel()) }
+    val viewModel by remember { mutableStateOf(CreateLeagueViewModel()) }
 
     mainViewModel.onFABTapped.value = {
         viewModel.addPlayerFields.add(PlayerSelectionField())
@@ -78,7 +79,7 @@ fun CreateLeague(mainViewModel: MainViewModel) {
 
         item {
             Row(
-                horizontalArrangement = Arrangement.End,
+                horizontalArrangement = Arrangement.Center,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 8.dp)
@@ -98,7 +99,7 @@ fun CreateLeague(mainViewModel: MainViewModel) {
 }
 
 @Composable
-fun SelectedPlayerRow(item: PlayerSelectionField, viewModel: NewCreateLeagueViewModel) {
+fun SelectedPlayerRow(item: PlayerSelectionField, viewModel: CreateLeagueViewModel) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -123,18 +124,21 @@ fun SelectedPlayerRow(item: PlayerSelectionField, viewModel: NewCreateLeagueView
                 }
             )
             item.suggestions.forEach {
-                Text(
-                    "${it.firstName} ${it.lastName}",
-                    modifier = Modifier.clickable {
-                        viewModel.selectedPlayers.add(
-                            SelectedPlayer(
-                                player = it,
-                                position = item.position
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        "${it.firstName} ${it.lastName}",
+                        modifier = Modifier.clickable {
+                            viewModel.selectedPlayers.add(
+                                SelectedPlayer(
+                                    player = it,
+                                    position = item.position
+                                )
                             )
-                        )
-                        viewModel.addPlayerFields.remove(item)
-                    }
-                )
+                            viewModel.addPlayerFields.remove(item)
+                        }.padding(4.dp)
+                    )
+                    Text(it.team, color = MaterialTheme.colors.onSurface)
+                }
             }
         }
 

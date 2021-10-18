@@ -28,9 +28,9 @@ data class PlayerSelectionField(
     var suggestions: SnapshotStateList<Player> = mutableStateListOf()
 )
 
-class NewCreateLeagueViewModel : ViewModel() {
+class CreateLeagueViewModel : ViewModel() {
     val selectedPlayers = mutableStateListOf<SelectedPlayer>()
-    val addPlayerFields = mutableStateListOf<PlayerSelectionField>()
+    val addPlayerFields = mutableStateListOf(PlayerSelectionField())
     val leagueName = mutableStateOf(TextFieldValue(""))
 
     fun getSuggestions(selectionField: PlayerSelectionField) {
