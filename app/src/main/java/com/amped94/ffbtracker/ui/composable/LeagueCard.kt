@@ -45,7 +45,7 @@ fun LeagueCard(
                     data.league.name,
                     modifier = Modifier
                         .padding(top = 8.dp, bottom = 8.dp, start = 8.dp),
-                    fontSize = 18.sp
+                    fontSize = 24.sp
                 )
 
                 if (data.league.type == FantasyProvider.Custom) {
@@ -57,7 +57,7 @@ fun LeagueCard(
                                 editLeague()
                             }
                         )
-                        Spacer(Modifier.width(8.dp))
+                        Spacer(Modifier.width(24.dp))
                         Icon(
                             imageVector = Icons.Default.Delete,
                             contentDescription = "Delete League",
@@ -65,6 +65,7 @@ fun LeagueCard(
                                 deleteLeague()
                             }
                         )
+                        Spacer(Modifier.width(8.dp))
                     }
                 }
             }

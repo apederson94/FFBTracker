@@ -1,8 +1,7 @@
 package com.amped94.ffbtracker.data.model.viewModel
 
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.amped94.ffbtracker.data.model.db.entity.League
@@ -14,8 +13,7 @@ class LeaguesViewModel : ViewModel() {
     var isDeleteAlertShowing = mutableStateOf(false)
     var leagueToDelete = mutableStateOf<League?>(null)
 
-    private val _leaguesAndPlayers: MutableLiveData<List<LeagueAndPlayers>> = MutableLiveData()
-    val leaguesAndPlayers: LiveData<List<LeagueAndPlayers>> = _leaguesAndPlayers
+    val leaguesAndPlayers = mutableStateListOf<LeagueAndPlayers>()
 
     init {
         getLeagues()
@@ -24,7 +22,8 @@ class LeaguesViewModel : ViewModel() {
     fun getLeagues() {
         viewModelScope.launch {
             val queriedResults = SleeperRepository.getLeaguesAndPlayers()
-            _leaguesAndPlayers.postValue(queriedResults)
+            leaguesAndPlayers.clear()
+            leaguesAndPlayers.addAll(queriedResults.sortedBy { it.league.name })
         }
     }
 

@@ -2,8 +2,6 @@ package com.amped94.ffbtracker.data.model.viewModel
 
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.amped94.ffbtracker.data.model.db.entity.PlayerAndLeagues
@@ -11,9 +9,7 @@ import com.amped94.ffbtracker.data.repository.SleeperRepository
 import kotlinx.coroutines.launch
 
 class MainViewModel : ViewModel() {
-
-    private var _playersAndLeagues: MutableLiveData<List<PlayerAndLeagues>> = MutableLiveData()
-    val playersAndLeagues: LiveData<List<PlayerAndLeagues>> = _playersAndLeagues
+    val playersAndLeagues = mutableStateListOf<PlayerAndLeagues>()
 
     var onFABTapped = mutableStateOf({})
     var title = mutableStateOf("FFBTracker")
@@ -26,15 +22,19 @@ class MainViewModel : ViewModel() {
 
     fun getPlayersAndLeaguesInitial() {
         viewModelScope.launch {
-            val playerAndLeagues = SleeperRepository.getPlayersAndLeaguesInitial()
-            _playersAndLeagues.postValue(playerAndLeagues)
+            val newPlayersAndLeagues = SleeperRepository.getPlayersAndLeaguesInitial()
+
+            playersAndLeagues.clear()
+            playersAndLeagues.addAll(newPlayersAndLeagues)
         }
     }
 
     fun getPlayersAndLeagues() {
         viewModelScope.launch {
-            val playersAndLeagues = SleeperRepository.getPlayersAndLeagues()
-            _playersAndLeagues.postValue(playersAndLeagues)
+            val newPlayersAndleagues = SleeperRepository.getPlayersAndLeagues()
+
+            playersAndLeagues.clear()
+            playersAndLeagues.addAll(newPlayersAndleagues)
         }
     }
 }
