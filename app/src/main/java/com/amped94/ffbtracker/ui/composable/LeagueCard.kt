@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.amped94.ffbtracker.data.model.db.FantasyProvider
 import com.amped94.ffbtracker.data.model.db.entity.LeagueAndPlayers
+import com.amped94.ffbtracker.data.model.viewModel.Position
 
 @Composable
 fun LeagueCard(
@@ -71,14 +72,51 @@ fun LeagueCard(
             }
 
             if (!isCollapsed.value) {
-                data.players.sortedBy { it.lastName }.forEach { player ->
-                    Text(
-                        "${player.lastName}, ${player.firstName}",
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 32.dp, vertical = 4.dp)
-                    )
+                val sortedPlayers = data.players.sortedBy { it.lastName }
+                Row(modifier = Modifier.fillMaxWidth()) {
+                    Column(modifier = Modifier.padding(start = 32.dp)) {
+                        sortedPlayers.forEach { player ->
+                            val position = Position.getFromString(player.position)
+                            Text(
+                                text = position.title,
+                                color = position.backgroundColor,
+                            )
+                            Spacer(modifier = Modifier.height(12.dp))
+                        }
+                    }
+                    Column(modifier = Modifier.padding(start = 16.dp)) {
+                        sortedPlayers.forEach { player ->
+                            Text("${player.lastName}, ${player.firstName}")
+                            Spacer(modifier = Modifier.height(12.dp))
+                        }
+                    }
+                    Column(modifier = Modifier.padding(start = 16.dp)) {
+                        sortedPlayers.forEach { player ->
+                            Text(
+                                text = player.team,
+                                color = Color.Gray
+                            )
+                            Spacer(modifier = Modifier.height(12.dp))
+                        }
+                    }
                 }
+//                data.players.sortedBy { it.lastName }.forEach { player ->
+//                    Row(verticalAlignment = Alignment.CenterVertically) {
+//                        val position = Position.getFromString(player.position)
+//                        Text(
+//                            text = position.title,
+//                            color = position.backgroundColor,
+//                            modifier = Modifier.padding(start = 32.dp).padding(vertical = 8.dp)
+//                        )
+//                        Spacer(modifier = Modifier.width(16.dp))
+//                        Text(
+//                            "${player.lastName}, ${player.firstName}"
+//                        )
+//                        Spacer(modifier = Modifier.width(16.dp))
+//                        Text(player.team, color = Color.Gray)
+//                    }
+//
+//                }
             }
         }
     }

@@ -1,11 +1,14 @@
 package com.amped94.ffbtracker.ui.composable
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import com.amped94.ffbtracker.data.model.viewModel.Position
 
 @Composable
@@ -15,7 +18,12 @@ fun PositionDropdownMenu(onPositionSelectionChanged: (Position) -> Unit) {
 
     Row {
         Column {
-            Button(onClick = { expanded = true }) {
+            Button(
+                onClick = { expanded = true },
+                colors = ButtonDefaults.buttonColors(
+                    backgroundColor = selectedPosition.backgroundColor
+                )
+            ) {
                 Text(selectedPosition.title)
                 Icon(Icons.Filled.ArrowDropDown, "")
             }
@@ -23,12 +31,14 @@ fun PositionDropdownMenu(onPositionSelectionChanged: (Position) -> Unit) {
             if (expanded) {
                 DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
                     Position.values().forEach { position ->
-                        DropdownMenuItem(onClick = {
-                            onPositionSelectionChanged(position)
-                            selectedPosition = position
-                            expanded = false
-                        }) {
-                            Text(position.title)
+                        DropdownMenuItem(
+                            onClick = {
+                                onPositionSelectionChanged(position)
+                                selectedPosition = position
+                                expanded = false
+                            }
+                        ) {
+                            Text(position.title, color = position.backgroundColor)
                         }
                     }
                 }

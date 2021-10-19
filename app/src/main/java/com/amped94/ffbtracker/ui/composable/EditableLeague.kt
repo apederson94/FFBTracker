@@ -48,7 +48,11 @@ fun EditableLeague(viewModel: EditableLeagueViewModel) {
                 horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text(item.position.title, modifier = Modifier.padding(end = 8.dp))
+                Text(
+                    text = item.position.title,
+                    color = item.position.backgroundColor,
+                    modifier = Modifier.padding(end = 8.dp)
+                )
                 OutlinedTextField(
                     value = TextFieldValue("${item.player.firstName} ${item.player.lastName}"),
                     onValueChange = {},

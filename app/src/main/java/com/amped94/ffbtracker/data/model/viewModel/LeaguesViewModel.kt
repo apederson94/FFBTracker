@@ -2,11 +2,13 @@ package com.amped94.ffbtracker.data.model.viewModel
 
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.amped94.ffbtracker.data.model.db.entity.League
 import com.amped94.ffbtracker.data.model.db.entity.LeagueAndPlayers
 import com.amped94.ffbtracker.data.repository.SleeperRepository
+import com.amped94.ffbtracker.ui.theme.*
 import kotlinx.coroutines.launch
 
 class LeaguesViewModel : ViewModel() {
@@ -48,13 +50,31 @@ class LeaguesViewModel : ViewModel() {
     }
 }
 
-enum class Position(val title: String) {
-    QB("QB"),
-    RB("RB"),
-    WR("WR"),
-    TE("TE"),
-    K("K"),
-    DST("DST");
+enum class Position(val title: String, val backgroundColor: Color) {
+    QB(
+        title = "QB",
+        backgroundColor = QBRed
+    ),
+    RB(
+        title = "RB",
+        backgroundColor = RBGreen
+    ),
+    WR(
+        title = "WR",
+        backgroundColor = WRBlue
+    ),
+    TE(
+        title = "TE",
+        backgroundColor = TEYellow
+    ),
+    K(
+        "K",
+        backgroundColor = KPurple
+    ),
+    DST(
+        title = "DST",
+        backgroundColor = DSTBrown
+    );
 
     fun isFLEX(): Boolean {
         return this == RB || this == WR || this == TE
