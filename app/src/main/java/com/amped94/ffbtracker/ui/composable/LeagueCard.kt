@@ -77,10 +77,7 @@ fun LeagueCard(
                     Column(modifier = Modifier.padding(start = 32.dp)) {
                         sortedPlayers.forEach { player ->
                             val position = Position.getFromString(player.position)
-                            Text(
-                                text = position.title,
-                                color = position.backgroundColor,
-                            )
+                            PositionText(position = position)
                             Spacer(modifier = Modifier.height(12.dp))
                         }
                     }
@@ -100,24 +97,15 @@ fun LeagueCard(
                         }
                     }
                 }
-//                data.players.sortedBy { it.lastName }.forEach { player ->
-//                    Row(verticalAlignment = Alignment.CenterVertically) {
-//                        val position = Position.getFromString(player.position)
-//                        Text(
-//                            text = position.title,
-//                            color = position.backgroundColor,
-//                            modifier = Modifier.padding(start = 32.dp).padding(vertical = 8.dp)
-//                        )
-//                        Spacer(modifier = Modifier.width(16.dp))
-//                        Text(
-//                            "${player.lastName}, ${player.firstName}"
-//                        )
-//                        Spacer(modifier = Modifier.width(16.dp))
-//                        Text(player.team, color = Color.Gray)
-//                    }
-//
-//                }
             }
         }
     }
+}
+
+@Composable
+fun PositionText(position: Position) {
+    Text(
+        text = position.title,
+        color = position.backgroundColor,
+    )
 }
