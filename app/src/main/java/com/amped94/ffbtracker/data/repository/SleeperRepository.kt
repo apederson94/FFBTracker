@@ -20,10 +20,12 @@ object SleeperRepository {
         val sleeperLeagues = db.leagueDao().getLeaguesForUsers(sleeperUsers.map { it.userId })
         val playersForLeagues =
             db.playerLeagueCrossRefDao().getEntriesForLeagues(sleeperLeagues.map { it.leagueId })
+        val allPlayers = db.playerDao().getAll()
 
         db.userDao().delete(*sleeperUsers.toTypedArray())
         db.leagueDao().delete(*sleeperLeagues.toTypedArray())
         db.playerLeagueCrossRefDao().delete(*playersForLeagues.toTypedArray())
+        db.playerDao().delete(*allPlayers.toTypedArray())
 
         return getPlayersAndLeagues()
     }
@@ -147,31 +149,36 @@ object SleeperRepository {
         }
     }
 
-    suspend fun getAllPlayers(): List<Player> {
-        val queriedPlayers = db.playerDao().getAll()
-
-        val prefs = PreferenceManager.getDefaultSharedPreferences(MainApplication.getContext())
-        val timestamp = prefs.getLong("previousPlayerQueryTimestamp", 0)
-        val timestampDate = Calendar.getInstance().apply {
-            timeInMillis = timestamp
-            add(Calendar.HOUR, 24)
+    suspend fun fetchAndStoreAllPlayers() {
+        val playersReponse = SleeperApi.getAllPlayers()
+        val roomPlayers = playersReponse.map {
+            Player(
+                playerId = 0,
+                externalPlayerId = it.key,
+                firstName = it.value.firstName,
+                lastName = it.value.lastName,
+                age = it.value.age ?: 0,
+                number = it.value.number ?: 0,
+                team = it.value.team ?: "FA",
+                position = it.value.position ?: ""
+            )
         }
 
-        return if (queriedPlayers.isNotEmpty() && timestampDate.after(Calendar.getInstance())) queriedPlayers else {
-            val playersReponse = SleeperApi.getAllPlayers()
-            val roomPlayers = playersReponse.map {
-                Player(
-                    playerId = 0,
-                    externalPlayerId = it.key,
-                    firstName = it.value.firstName,
-                    lastName = it.value.lastName,
-                    age = it.value.age ?: 0,
-                    number = it.value.number ?: 0,
-                    team = it.value.team ?: "FA",
-                    position = it.value.position ?: ""
-                )
-            }
-            db.playerDao().insert(*roomPlayers.toTypedArray())
+        db.playerDao().insert(*roomPlayers.toTypedArray())
+    }
+
+    suspend fun refreshAllPlayers() {
+        val playersInDb = db.playerDao().getAll()
+        db.playerDao().delete(*playersInDb.toTypedArray())
+
+        fetchAndStoreAllPlayers()
+    }
+
+    suspend fun getAllPlayers(): List<Player> {
+        val playersInDb = db.playerDao().getAll()
+
+        return if (playersInDb.isNotEmpty()) playersInDb else {
+            fetchAndStoreAllPlayers()
             db.playerDao().getAll()
         }
     }
