@@ -6,6 +6,7 @@ import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequest
 import androidx.work.WorkManager
 import com.amped94.ffbtracker.data.work.AllPlayersWorker
+import com.amped94.ffbtracker.data.work.PlayersAndLeaguesWorker
 import java.time.Duration
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -18,10 +19,11 @@ class MainApplication: Application() {
         super.onCreate()
         instance = this
 
-        enqueuePeriodicWork()
+        enqueueGetAllPlayers()
+        enqueueGetPlayersAndLeagues()
     }
 
-    private fun enqueuePeriodicWork() {
+    private fun enqueueGetAllPlayers() {
         val currentDate = Calendar.getInstance()
         val requestDate = Calendar.getInstance().apply {
             set(Calendar.HOUR_OF_DAY, 3)
@@ -44,6 +46,21 @@ class MainApplication: Application() {
         WorkManager.getInstance(this)
             .enqueueUniquePeriodicWork(
                 "GetAllPlayers",
+                ExistingPeriodicWorkPolicy.KEEP,
+                workRequest
+            )
+    }
+
+    private fun enqueueGetPlayersAndLeagues() {
+        val workRequest = PeriodicWorkRequest.Builder(
+            PlayersAndLeaguesWorker::class.java,
+            1,
+            TimeUnit.HOURS
+        ).build()
+
+        WorkManager.getInstance(this)
+            .enqueueUniquePeriodicWork(
+                "RefreshPlayersAndLeagues",
                 ExistingPeriodicWorkPolicy.KEEP,
                 workRequest
             )

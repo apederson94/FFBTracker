@@ -15,17 +15,15 @@ import java.util.*
 object SleeperRepository {
     val db: AppDatabase = AppDatabase.instance
 
-    suspend fun getPlayersAndLeaguesInitial(): List<PlayerAndLeagues> {
+    suspend fun refreshPlayersAndLeagues(): List<PlayerAndLeagues> {
         val sleeperUsers = db.userDao().getUsersWithType(FantasyProvider.Sleeper)
         val sleeperLeagues = db.leagueDao().getLeaguesForUsers(sleeperUsers.map { it.userId })
         val playersForLeagues =
             db.playerLeagueCrossRefDao().getEntriesForLeagues(sleeperLeagues.map { it.leagueId })
-        val allPlayers = db.playerDao().getAll()
 
         db.userDao().delete(*sleeperUsers.toTypedArray())
         db.leagueDao().delete(*sleeperLeagues.toTypedArray())
         db.playerLeagueCrossRefDao().delete(*playersForLeagues.toTypedArray())
-        db.playerDao().delete(*allPlayers.toTypedArray())
 
         return getPlayersAndLeagues()
     }
@@ -149,7 +147,7 @@ object SleeperRepository {
         }
     }
 
-    suspend fun fetchAndStoreAllPlayers() {
+    private suspend fun fetchAndStoreAllPlayers() {
         val playersReponse = SleeperApi.getAllPlayers()
         val roomPlayers = playersReponse.map {
             Player(
