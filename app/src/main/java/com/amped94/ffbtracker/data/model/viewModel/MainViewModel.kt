@@ -16,25 +16,16 @@ class MainViewModel : ViewModel() {
 
     init {
         viewModelScope.launch {
-            getPlayersAndLeaguesInitial()
+            getPlayersAndLeagues()
         }
     }
 
-    private fun getPlayersAndLeaguesInitial() {
+    private fun getPlayersAndLeagues() {
         viewModelScope.launch {
             val newPlayersAndLeagues = SleeperRepository.getPlayersAndLeagues()
 
             playersAndLeagues.clear()
             playersAndLeagues.addAll(newPlayersAndLeagues)
-        }
-    }
-
-    fun getPlayersAndLeagues() {
-        viewModelScope.launch {
-            val newPlayersAndleagues = SleeperRepository.getPlayersAndLeagues()
-
-            playersAndLeagues.clear()
-            playersAndLeagues.addAll(newPlayersAndleagues)
         }
     }
 }
