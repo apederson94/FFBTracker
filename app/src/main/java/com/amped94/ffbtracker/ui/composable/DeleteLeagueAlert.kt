@@ -1,8 +1,8 @@
 package com.amped94.ffbtracker.ui.composable
 
-import androidx.compose.material.AlertDialog
-import androidx.compose.material.Button
-import androidx.compose.material.Text
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import com.amped94.ffbtracker.data.model.db.entity.League
 

@@ -108,18 +108,13 @@ object SleeperRepository {
 
         return if (querieidLeagues.isNotEmpty()) querieidLeagues else {
             val leaguesResponse = SleeperApi.getSleeperLeagues(user.accountId)
-            val leaguesToInsert = mutableListOf<League>()
-
-            leaguesResponse.forEach { league ->
-
-                leaguesToInsert.add(
-                    League(
-                        leagueId = 0,
-                        externalLeagueId = league.leagueId,
-                        associatedUserId = user.userId,
-                        name = league.name,
-                        type = FantasyProvider.Sleeper
-                    )
+            val leaguesToInsert = leaguesResponse.map {
+                League(
+                    leagueId = 0,
+                    externalLeagueId = it.leagueId,
+                    associatedUserId = user.userId,
+                    name = it.name,
+                    type = FantasyProvider.Sleeper
                 )
             }
 

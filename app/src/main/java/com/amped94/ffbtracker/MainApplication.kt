@@ -54,14 +54,14 @@ class MainApplication: Application() {
     private fun enqueueGetPlayersAndLeagues() {
         val workRequest = PeriodicWorkRequest.Builder(
             PlayersAndLeaguesWorker::class.java,
-            1,
-            TimeUnit.HOURS
+            15,
+            TimeUnit.MINUTES
         ).build()
 
         WorkManager.getInstance(this)
             .enqueueUniquePeriodicWork(
                 "RefreshPlayersAndLeagues",
-                ExistingPeriodicWorkPolicy.KEEP,
+                ExistingPeriodicWorkPolicy.REPLACE,
                 workRequest
             )
     }

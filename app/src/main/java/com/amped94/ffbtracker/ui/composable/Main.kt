@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -16,6 +17,7 @@ import com.amped94.ffbtracker.data.model.ui.Screen
 import com.amped94.ffbtracker.data.model.viewModel.MainViewModel
 import com.amped94.ffbtracker.util.screenIsShowing
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Main() {
     val navController = rememberNavController()

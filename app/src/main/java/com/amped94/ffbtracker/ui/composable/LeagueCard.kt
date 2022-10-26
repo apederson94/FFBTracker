@@ -3,9 +3,9 @@ package com.amped94.ffbtracker.ui.composable
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
-import androidx.compose.material.Icon
-import androidx.compose.material.Text
+import androidx.compose.material3.Card
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
@@ -31,7 +31,6 @@ fun LeagueCard(
 
     Card(
         shape = RoundedCornerShape(16.dp),
-        backgroundColor = Color.DarkGray,
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 8.dp)

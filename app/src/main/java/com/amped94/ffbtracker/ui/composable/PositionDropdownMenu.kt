@@ -1,14 +1,11 @@
 package com.amped94.ffbtracker.ui.composable
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.material.*
+import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.runtime.*
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import com.amped94.ffbtracker.data.model.viewModel.Position
 
 @Composable
@@ -21,7 +18,7 @@ fun PositionDropdownMenu(onPositionSelectionChanged: (Position) -> Unit) {
             Button(
                 onClick = { expanded = true },
                 colors = ButtonDefaults.buttonColors(
-                    backgroundColor = selectedPosition.backgroundColor
+                    contentColor = selectedPosition.backgroundColor
                 )
             ) {
                 Text(selectedPosition.title)
@@ -32,14 +29,13 @@ fun PositionDropdownMenu(onPositionSelectionChanged: (Position) -> Unit) {
                 DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
                     Position.values().forEach { position ->
                         DropdownMenuItem(
-                            onClick = {
+                            text = { Text(position.title, color = position.backgroundColor) }
+                            , onClick = {
                                 onPositionSelectionChanged(position)
                                 selectedPosition = position
                                 expanded = false
                             }
-                        ) {
-                            Text(position.title, color = position.backgroundColor)
-                        }
+                        )
                     }
                 }
             }
