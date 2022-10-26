@@ -42,7 +42,7 @@ fun PlayersList(viewModel: MainViewModel) {
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     modifier = Modifier
                         .background(color = MaterialTheme.colorScheme.background)
-                        .padding(8.dp)
+                        .padding(horizontal = 8.dp)
                         .fillMaxWidth()
                 ) {
                     OutlinedTextField(
@@ -51,7 +51,7 @@ fun PlayersList(viewModel: MainViewModel) {
                             viewModel.searchPlayers(it)
                         },
                         label = { Text("Search") },
-
+                        modifier = Modifier.fillMaxWidth(0.67f)
                         )
                     ExposedDropdownMenuBox(
                         expanded = expanded,
@@ -61,9 +61,9 @@ fun PlayersList(viewModel: MainViewModel) {
                             // The `menuAnchor` modifier must be passed to the text field for correctness.
                             modifier = Modifier.menuAnchor(),
                             readOnly = true,
-                            value = viewModel.selectedPosition.value?.title ?: "ANY",
+                            value = viewModel.selectedPosition.value?.title ?: "Any",
                             onValueChange = {},
-                            label = { Text("Label") },
+                            label = { Text("Position") },
                             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
                             colors = ExposedDropdownMenuDefaults.textFieldColors(),
                             textStyle = TextStyle(
@@ -75,7 +75,7 @@ fun PlayersList(viewModel: MainViewModel) {
                         ExposedDropdownMenu(
                             expanded = expanded,
                             onDismissRequest = { expanded = false }) {
-                            DropdownMenuItem(text = { Text("ANY") }, onClick = {
+                            DropdownMenuItem(text = { Text("Any") }, onClick = {
                                 viewModel.filterPlayers(null)
                                 expanded = false
                             })
@@ -114,13 +114,16 @@ fun PlayersList(viewModel: MainViewModel) {
                         )
                     }
 
-
                     item.leagues.forEach {
                         Text(
                             it.name, modifier = Modifier.padding(start = 64.dp),
                             fontSize = 16.sp
                         )
                     }
+                }
+
+                item {
+                    Spacer(modifier = Modifier.height(24.dp))
                 }
             } else {
                 item {
