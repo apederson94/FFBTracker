@@ -21,6 +21,7 @@ fun BottomBar(navController: NavController) {
                 label = { screen.title?.let { Text(it) } },
                 selected = selectedItem == screen,
                 onClick = {
+                    selectedItem = screen
                     navController.navigate(screen.route) {
                         // Pop up to the start destination of the graph to
                         // avoid building up a large stack of destinations
@@ -39,15 +40,4 @@ fun BottomBar(navController: NavController) {
         }
 
     }
-//    BottomAppBar(actions = {
-//        navItems.forEach { screen ->
-//            IconButton(onClick = {
-//
-//            }) {
-//                screen.img?.let {
-//                    Icon(it, screen.title)
-//                }
-//            }
-//        }
-//    })
 }
