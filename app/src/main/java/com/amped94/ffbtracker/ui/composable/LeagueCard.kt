@@ -89,8 +89,7 @@ fun LeagueCard(
                     Column(modifier = Modifier.padding(start = 16.dp)) {
                         sortedPlayers.forEach { player ->
                             Text(
-                                text = player.team,
-                                color = Color.Gray
+                                text = player.team
                             )
                             Spacer(modifier = Modifier.height(12.dp))
                         }

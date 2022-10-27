@@ -110,7 +110,7 @@ fun PlayersList(viewModel: MainViewModel) {
                         Spacer(Modifier.width(16.dp))
                         Text(
                             text = item.player.team,
-                            color = Color.Gray
+                            color = MaterialTheme.colorScheme.surfaceVariant
                         )
                     }
 
