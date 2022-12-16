@@ -34,6 +34,9 @@ interface PlayerDao {
     @Query("SELECT * FROM Player WHERE playerId IN (SELECT playerId FROM PlayerLeagueCrossRef WHERE leagueId IN (:leagueIds))")
     suspend fun getPlayersInLeagues(leagueIds: List<Long>): List<PlayerAndLeagues>
 
+    @Query("SELECT DISTINCT team FROM Player ORDER BY team")
+    suspend fun getAllTeams(): List<String>
+
     @Insert
     suspend fun insert(vararg player: Player): List<Long>
 

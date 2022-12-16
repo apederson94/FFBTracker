@@ -240,6 +240,10 @@ object SleeperRepository {
         db.leagueDao().delete(league)
         db.playerLeagueCrossRefDao().cleanUpEntries()
     }
+
+    suspend fun getTeams(): List<String> {
+        return db.playerDao().getAllTeams()
+    }
 }
 
 typealias LeagueAndParticipantCall = Deferred<Pair<League, SleeperLeagueParticipant?>>

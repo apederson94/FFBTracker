@@ -24,7 +24,7 @@ fun PlayerSelectionRow(
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = Modifier.fillMaxWidth()
     ) {
-        PositionDropdownMenu {
+        AddPlayerPositionDropdown {
             item.position = it
             if (item.textFieldValue.value.text.length > 2) {
                 getSuggestions()

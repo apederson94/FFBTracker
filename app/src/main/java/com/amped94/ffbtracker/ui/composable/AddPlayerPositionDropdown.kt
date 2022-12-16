@@ -9,7 +9,7 @@ import androidx.compose.runtime.*
 import com.amped94.ffbtracker.data.model.viewModel.Position
 
 @Composable
-fun PositionDropdownMenu(onPositionSelectionChanged: (Position) -> Unit) {
+fun AddPlayerPositionDropdown(onPositionSelectionChanged: (Position) -> Unit) {
     var expanded by remember { mutableStateOf(false) }
     var selectedPosition by remember { mutableStateOf(Position.QB) }
 

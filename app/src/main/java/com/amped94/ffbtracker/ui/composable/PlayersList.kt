@@ -9,8 +9,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.amped94.ffbtracker.data.model.viewModel.MainViewModel
@@ -19,9 +18,8 @@ import com.amped94.ffbtracker.data.model.viewModel.Position
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun PlayersList(viewModel: MainViewModel) {
-    var expanded by remember { mutableStateOf(false) }
-
     viewModel.title.value = "Players"
+    var showFilters = remember { mutableStateOf(false) }
 
     if (viewModel.isLoading.value) {
         Column(
@@ -37,61 +35,40 @@ fun PlayersList(viewModel: MainViewModel) {
     } else {
         LazyColumn(modifier = Modifier.fillMaxSize()) {
             stickyHeader {
-                Row(
-                    verticalAlignment = Alignment.Bottom,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    modifier = Modifier
-                        .background(color = MaterialTheme.colorScheme.background)
-                        .padding(horizontal = 8.dp)
-                        .fillMaxWidth()
+                Column(modifier = Modifier
+                    .background(color = MaterialTheme.colorScheme.background)
+                    .padding(horizontal = 8.dp)
+                    .fillMaxWidth()
                 ) {
-                    OutlinedTextField(
-                        value = viewModel.searchText.value,
-                        onValueChange = {
-                            viewModel.searchPlayers(it)
-                        },
-                        label = { Text("Search") },
-                        modifier = Modifier.fillMaxWidth(0.67f)
-                        )
-                    ExposedDropdownMenuBox(
-                        expanded = expanded,
-                        onExpandedChange = { expanded = !expanded },
+                    Row(
+                        verticalAlignment = Alignment.Bottom,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        TextField(
-                            // The `menuAnchor` modifier must be passed to the text field for correctness.
-                            modifier = Modifier.menuAnchor(),
-                            readOnly = true,
-                            value = viewModel.selectedPosition.value?.title ?: "Any",
-                            onValueChange = {},
-                            label = { Text("Position") },
-                            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-                            colors = ExposedDropdownMenuDefaults.textFieldColors(),
-                            textStyle = TextStyle(
-                                color = viewModel.selectedPosition.value?.backgroundColor
-                                    ?: MaterialTheme.colorScheme.onSurface
-                            )
+                        OutlinedTextField(
+                            value = viewModel.searchText.value,
+                            onValueChange = {
+                                viewModel.searchPlayers(it)
+                            },
+                            label = { Text("Search") },
+                            modifier = Modifier.fillMaxWidth(0.75f)
                         )
-
-                        ExposedDropdownMenu(
-                            expanded = expanded,
-                            onDismissRequest = { expanded = false }) {
-                            DropdownMenuItem(text = { Text("Any") }, onClick = {
-                                viewModel.filterPlayers(null)
-                                expanded = false
-                            })
-                            Position.values().forEach {
-                                DropdownMenuItem(text = {
-                                    Text(
-                                        it.title,
-                                        color = it.backgroundColor
-                                    )
-                                }, onClick = {
-                                    viewModel.filterPlayers(it)
-                                    expanded = false
-                                })
-                            }
+                        Button(onClick = { showFilters.value = !showFilters.value }) {
+                            Text("Filters")
                         }
                     }
+
+                    if (showFilters.value) {
+                        Row(
+                            verticalAlignment = Alignment.Bottom,
+                            horizontalArrangement = Arrangement.End,
+                            modifier = Modifier.padding(top = 8.dp)
+                        ) {
+                            PlayerTeamDropdown(viewModel = viewModel)
+                            Spacer(modifier = Modifier.width(8.dp))
+                            PlayerPositionDropdown(viewModel = viewModel)
+                        }
+                    }
+                    Divider(modifier = Modifier.padding(top = 8.dp))
                 }
             }
             if (viewModel.playersAndLeaguesToShow.isNotEmpty()) {
@@ -132,5 +109,4 @@ fun PlayersList(viewModel: MainViewModel) {
             }
         }
     }
-
 }

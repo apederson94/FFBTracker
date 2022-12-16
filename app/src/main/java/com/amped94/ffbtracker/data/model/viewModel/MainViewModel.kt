@@ -12,6 +12,9 @@ import kotlinx.coroutines.launch
 class MainViewModel : ViewModel() {
     private val playersAndLeagues = mutableStateListOf<PlayerAndLeagues>()
     val playersAndLeaguesToShow = mutableStateListOf<PlayerAndLeagues>()
+    val allTeams = mutableStateListOf<String>()
+    val selectedTeam: MutableState<String?> = mutableStateOf(null)
+
     val isLoading = mutableStateOf(false)
     val searchText = mutableStateOf("")
     val selectedPosition: MutableState<Position?> = mutableStateOf(null)
@@ -21,11 +24,11 @@ class MainViewModel : ViewModel() {
 
     init {
         viewModelScope.launch {
-            getPlayersAndLeagues()
+            loadLeagueData()
         }
     }
 
-    fun filterPlayers(text: String, position: Position?) {
+    fun filterPlayers(text: String, position: Position?, team: String?) {
         val filteredPlayersAndLeages = playersAndLeagues
             .filter {
                 if (text.isNotBlank()) {
@@ -34,9 +37,10 @@ class MainViewModel : ViewModel() {
                 } else true
             }
             .filter {
-                if (position != null) {
-                    it.player.position == position.title
-                } else true
+                val positionFilter = position == null || it.player.position == position.title
+                val teamFilter = team == null || it.player.team == team
+
+                positionFilter && teamFilter
             }
 
         playersAndLeaguesToShow.clear()
@@ -45,23 +49,41 @@ class MainViewModel : ViewModel() {
 
     fun filterPlayers(position: Position?) {
         selectedPosition.value = position
-        filterPlayers(searchText.value, position)
+        filterPlayers(searchText.value, position, selectedTeam.value)
+    }
+
+    fun filterPlayers(team: String?) {
+        selectedTeam.value = team
+        filterPlayers(searchText.value, selectedPosition.value, team)
     }
 
     fun searchPlayers(text: String) {
         searchText.value = text
-        filterPlayers(text, selectedPosition.value)
+        filterPlayers(text, selectedPosition.value, selectedTeam.value)
     }
 
-    private fun getPlayersAndLeagues() {
+    private fun loadLeagueData() {
         isLoading.value = true
         viewModelScope.launch {
-            val newPlayersAndLeagues = SleeperRepository.getPlayersAndLeagues()
-
-            playersAndLeagues.clear()
-            playersAndLeagues.addAll(newPlayersAndLeagues)
-            playersAndLeaguesToShow.addAll(newPlayersAndLeagues)
+            getPlayersAndLeagues()
+            getTeams()
             isLoading.value = false
         }
+
+    }
+
+    private suspend fun getPlayersAndLeagues() {
+        val newPlayersAndLeagues = SleeperRepository.getPlayersAndLeagues()
+
+        playersAndLeagues.clear()
+        playersAndLeagues.addAll(newPlayersAndLeagues)
+        playersAndLeaguesToShow.addAll(newPlayersAndLeagues)
+    }
+
+    private suspend fun getTeams() {
+        val teams = SleeperRepository.getTeams()
+
+        allTeams.clear()
+        allTeams.addAll(teams)
     }
 }
