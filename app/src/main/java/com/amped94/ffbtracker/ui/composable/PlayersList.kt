@@ -2,9 +2,12 @@ package com.amped94.ffbtracker.ui.composable
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -19,7 +22,7 @@ import com.amped94.ffbtracker.data.model.viewModel.Position
 @Composable
 fun PlayersList(viewModel: MainViewModel) {
     viewModel.title.value = "Players"
-    var showFilters = remember { mutableStateOf(false) }
+    val showFilters = remember { mutableStateOf(false) }
 
     if (viewModel.isLoading.value) {
         Column(
@@ -48,6 +51,17 @@ fun PlayersList(viewModel: MainViewModel) {
                             value = viewModel.searchText.value,
                             onValueChange = {
                                 viewModel.searchPlayers(it)
+                            },
+                            trailingIcon = {
+                                           if (viewModel.searchText.value.isNotEmpty()) {
+                                               Icon(
+                                                   Icons.Default.Clear,
+                                                   contentDescription = "clear",
+                                                   modifier = Modifier.clickable {
+                                                       viewModel.searchText.value = ""
+                                                   }
+                                               )
+                                           }
                             },
                             label = { Text("Search") },
                             modifier = Modifier.fillMaxWidth(0.75f)
